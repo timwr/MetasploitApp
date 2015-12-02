@@ -58,7 +58,7 @@ public class LoginActivity extends Activity {
 
             String result = intent.getStringExtra(MsfController.RESULT);
             if (result == null) {
-//                startActivity(new Intent(this, ConsoleActivity.class));
+                startActivity(new Intent(this, MainActivity.class));
                 finish();
             } else {
                 new AlertDialog.Builder(this).setMessage("Connection error: " + result).show();
