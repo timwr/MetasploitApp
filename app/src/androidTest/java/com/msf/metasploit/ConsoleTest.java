@@ -84,6 +84,11 @@ public class ConsoleTest extends TestCase {
 		System.err.println("result " + result);
 		System.err.println("result " + result.getClass().getSimpleName());
 		System.err.println("c" + consoleMap.get("data"));
+		String prompt = consoleMap.get("prompt");
+		prompt = prompt.replaceAll("\\x01|\\x02", "");
+//		String hexPrompt = Utils.bytesToHex(prompt.getBytes());
+//		System.err.println("hex " + hexPrompt);
+		assertEquals("msf exploit(handler) > ", prompt);
 
 		testKillConsoles();
 	}
