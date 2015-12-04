@@ -110,6 +110,7 @@ public class ConsoleFragment extends Fragment {
                 @Override
                 public void run() {
                     scrollviewConsole.fullScroll(ScrollView.FOCUS_DOWN);
+                    edittextInput.requestFocus();
                 }
             });
         }
@@ -125,14 +126,20 @@ public class ConsoleFragment extends Fragment {
                     MsgRpcImpl msgRpcImpl = msfController.getMsgRpcImpl();
 
                     if (consoleId != null) {
-                        Object result = msgRpcImpl.execute(RpcConstants.CONSOLE_WRITE, new Object[] { consoleId, command });
-                        updateContent();
+                        msgRpcImpl.execute(RpcConstants.CONSOLE_WRITE, new Object[] { consoleId, command });
                     }
 
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                textviewConsole.append(textviewPrompt.getText());
+                textviewConsole.append(command);
+                updateContent();
             }
         };
         updateTask.execute();
