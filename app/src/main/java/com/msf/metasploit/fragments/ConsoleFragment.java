@@ -101,8 +101,10 @@ public class ConsoleFragment extends Fragment {
 
     private void updateView(HashMap<String, String> consoleObject) {
         String prompt = consoleObject.get("prompt");
-        prompt = prompt.replaceAll("\\x01|\\x02", "");
-        textviewPrompt.setText(prompt);
+        if (prompt != null) {
+            prompt = prompt.replaceAll("\\x01|\\x02", "");
+            textviewPrompt.setText(prompt);
+        }
         String data = consoleObject.get("data");
         if (data != null) {
             textviewConsole.append(data);
