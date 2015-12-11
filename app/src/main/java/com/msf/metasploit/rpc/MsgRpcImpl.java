@@ -150,22 +150,6 @@ public class MsgRpcImpl extends RpcConnectionImpl {
         {
             pk.packString(src.toString());
         }
-        else if (src instanceof Object[]) {
-            Object[] list = (Object[]) src;
-            for (Object o : list) {
-                doMsg(pk, o);
-            }
-        }
-        else if (src instanceof Map) {
-//            Map map = (Map) src;
-//            pk.packMapHeader(map.size());
-//            MapValue mapValue;
-//            mapValue.writeTo(pk);
-//            pk.packValue(MapValue)
-//            for (Object o : list) {
-//                doMsg(pk, o);
-//            }
-        }
         else if (src instanceof Integer)
         {
             pk.packInt((int) src);
@@ -173,6 +157,21 @@ public class MsgRpcImpl extends RpcConnectionImpl {
         else if (src instanceof Boolean)
         {
             pk.packBoolean((Boolean) src);
+        }
+		else if (src instanceof Object[]) {
+			Object[] list = (Object[]) src;
+			for (Object o : list) {
+				doMsg(pk, o);
+			}
+		}
+        else if (src instanceof Map) {
+            Map map = (Map) src;
+            Set<Map.Entry> entrySet = map.entrySet();
+            pk.packMapHeader(entrySet.size());
+			for (Map.Entry entry : entrySet) {
+				pk.packString(entry.getKey().toString());
+                pk.packString(entry.getValue().toString());
+			}
         }
     }
 
