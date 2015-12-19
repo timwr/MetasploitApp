@@ -25,6 +25,8 @@ dependencies {
     compile "com.google.android.gms:play-services:8.3.0"
     compile 'org.msgpack:msgpack-core:0.7.0-M6'
 
+    compile 'com.google.code.gson:gson:2.2.4'
+
     compile('com.mikepenz:materialdrawer:4.4.6@aar') {
         transitive = true
     }

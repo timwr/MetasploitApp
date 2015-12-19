@@ -4,8 +4,13 @@ import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.msf.metasploit.model.MsfModel;
+import com.msf.metasploit.model.MsfServer;
+
+import java.util.List;
 
 public class ModelAdapter {
 
@@ -28,6 +33,16 @@ public class ModelAdapter {
                 new SecondaryDrawerItem().withName("String lol").withIcon(FontAwesome.Icon.faw_github),
                 new SecondaryDrawerItem().withName("String hello").withIcon(GoogleMaterial.Icon.gmd_format_color_fill).withTag("Bullhorn")
         );
+    }
+
+    public static IProfile[] buildProfiles(List<MsfServer> msfServers) {
+        IProfile[] profiles = new IProfile[msfServers.size()];
+        for (int i = 0; i < msfServers.size(); i++) {
+            MsfServer current = msfServers.get(i);
+            final IProfile profile = new ProfileDrawerItem().withName(current.rpcAddress).withIdentifier(i);
+            profiles[i] = profile;
+        }
+        return profiles;
 
     }
 }

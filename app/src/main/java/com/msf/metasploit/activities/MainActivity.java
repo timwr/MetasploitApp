@@ -2,21 +2,37 @@ package com.msf.metasploit.activities;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.util.KeyboardUtil;
+import com.msf.metasploit.MsfApplication;
 import com.msf.metasploit.R;
+import com.msf.metasploit.adapter.ModelAdapter;
 import com.msf.metasploit.fragments.ConsoleFragment;
+import com.msf.metasploit.model.MsfServer;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Drawer result = null;
+    private static final int ADD_NEW_SERVER = 1;
+    private static final int MODIFY_SERVER = 2;
+
+    private Drawer result;
+    private AccountHeader accountHeader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,10 +42,36 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        List<MsfServer> serverList = MsfApplication.getMsfMain().getMsfRpcSessions();
+        // Create the AccountHeader
+        accountHeader = new AccountHeaderBuilder()
+                .withActivity(this)
+                .withCompactStyle(true)
+                .addProfiles(ModelAdapter.buildProfiles(serverList))
+                .addProfiles(
+                        new ProfileSettingDrawerItem().withName("Add RPC Server").withDescription("Add new RPC server").withIcon(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_plus).actionBar().paddingDp(5).colorRes(R.color.material_drawer_primary_text)).withIdentifier(ADD_NEW_SERVER),
+                        new ProfileSettingDrawerItem().withName("Manage RPC Servers").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(MODIFY_SERVER)
+                )
+                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                    @Override
+                    public boolean onProfileChanged(View view, IProfile profile, boolean current) {
+                        if (profile.getIdentifier() == ADD_NEW_SERVER) {
+                            startActivity(new Intent(MainActivity.this, ServerActivity.class));
+                        } else if (profile.getIdentifier() == MODIFY_SERVER) {
+                            startActivity(new Intent(MainActivity.this, ServerActivity.class));
+                        }
+                        return false;
+                    }
+                })
+                .withSavedInstance(savedInstanceState)
+                .build();
+
+
         result = new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(toolbar)
                 .withHasStableIds(true)
+                .withAccountHeader(accountHeader)
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
