@@ -10,12 +10,14 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.msf.metasploit.activities.LoginActivity;
+import com.msf.metasploit.model.MsfRpc;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 
 public class MsfController {
+
     public static final String CONNECT = "connect";
     public static final String PASSWORD = "password";
     public static final String RESULT = "result";
@@ -93,17 +95,16 @@ public class MsfController {
         return mInstance;
     }
 
-    private MsgRpcImpl msgRpcImpl = null;
+    private MsfRpc msgRpcImpl = null;
 
-    public MsgRpcImpl getMsgRpcImpl() {
+    public MsfRpc getMsgRpcImpl() {
         return msgRpcImpl;
     }
 
     public void connect(String host, int port, String username,
             String password, boolean ssl) {
         try {
-            msgRpcImpl = new MsgRpcImpl(username, password, host, port, ssl,
-                    false);
+            msgRpcImpl = new MsfRpc(username, password, host, port, ssl);
 
         } catch (MalformedURLException e) {
             e.printStackTrace();

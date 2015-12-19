@@ -38,6 +38,7 @@ public class LoginActivity extends Activity {
 
         GCMController.checkRegistration(this);
         handleIntent(getIntent());
+
     }
 
     @Override

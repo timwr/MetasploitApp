@@ -1,8 +1,8 @@
 
 package com.msf.metasploit;
 
+import com.msf.metasploit.model.MsfRpc;
 import com.msf.metasploit.rpc.MsfController;
-import com.msf.metasploit.rpc.MsgRpcImpl;
 import com.msf.metasploit.rpc.RpcConstants;
 
 import junit.framework.TestCase;
@@ -33,7 +33,7 @@ public class ConsoleTest extends TestCase {
 	}
 
 	public void testKillConsoles() throws Exception {
-		MsgRpcImpl msgRpcImpl = msfController.getMsgRpcImpl();
+		MsfRpc msgRpcImpl = msfController.getMsgRpcImpl();
 		Object consoles = msgRpcImpl.execute(RpcConstants.CONSOLE_LIST);
 		HashMap<String, List> consoleMap = (HashMap<String, List>) consoles;
 		List consoleList = consoleMap.get("consoles");
@@ -57,7 +57,7 @@ public class ConsoleTest extends TestCase {
 	}
 
     public void testCreateConsole() throws Exception {
-		MsgRpcImpl msgRpcImpl = msfController.getMsgRpcImpl();
+		MsfRpc msgRpcImpl = msfController.getMsgRpcImpl();
 		Object consoleId = msgRpcImpl.execute(RpcConstants.CONSOLE_CREATE);
 		HashMap<String, String> consoleInfo = (HashMap<String, String>)consoleId;
 		assertEquals("msf > ", consoleInfo.get("prompt"));
@@ -66,7 +66,7 @@ public class ConsoleTest extends TestCase {
 	}
 
     public void testWriteConsole() throws Exception {
-		MsgRpcImpl msgRpcImpl = msfController.getMsgRpcImpl();
+		MsfRpc msgRpcImpl = msfController.getMsgRpcImpl();
 		Object consoleId = msgRpcImpl.execute(RpcConstants.CONSOLE_CREATE);
 		HashMap<String, String> consoleInfo = (HashMap<String, String>)consoleId;
 		assertEquals("msf > ", consoleInfo.get("prompt"));
