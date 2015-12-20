@@ -2,7 +2,6 @@ package com.msf.metasploit;
 
 import android.content.Intent;
 
-import com.msf.metasploit.model.DefaultRpcServer;
 import com.msf.metasploit.model.RpcServer;
 import com.msf.metasploit.rpc.Async;
 import com.msf.metasploit.rpc.RpcConnection;
@@ -19,11 +18,7 @@ public class MsfServerList {
     public List<RpcServer> serverList = new ArrayList<RpcServer>();
 
     public List<RpcServer> getServerList() {
-        if (serverList.size() == 0) {
-            serverList.add(DefaultRpcServer.createDefaultRpcServer());
-            RpcServer rpcServer = DefaultRpcServer.createDefaultRpcServer("10.0.2.2");
-            serverList.add(rpcServer);
-        }
+
         return serverList;
     }
 
@@ -33,6 +28,15 @@ public class MsfServerList {
 
     public static void toIntent(Intent intent, RpcServer rpcServer) {
         intent.putExtra(RPC_SERVER_ID, rpcServer.uid);
+    }
+
+    public RpcServer getRpcServer(int rpcServerId) {
+        for (RpcServer rpcServer : serverList) {
+            if (rpcServer.uid == rpcServerId) {
+                return rpcServer;
+            }
+        }
+        throw new RuntimeException();
     }
 
     private List<UpdateListener> listeners = new LinkedList<>();
@@ -45,20 +49,11 @@ public class MsfServerList {
         listeners.remove(listener);
     }
 
-    public RpcServer getRpcServer(int rpcServerId) {
-        for (RpcServer rpcServer : Msf.get().getServerList()) {
-            if (rpcServer.uid == rpcServerId) {
-                return rpcServer;
-            }
-        }
-        throw new RuntimeException();
-    }
-
     public interface UpdateListener {
         void onUpdated();
     }
 
-    public void updateList() {
+    private void updateListeners() {
         for (UpdateListener listener : listeners) {
             listener.onUpdated();
         }
@@ -70,20 +65,20 @@ public class MsfServerList {
 
     public void connectServer(RpcServer rpcServer) {
         rpcServer.status = RpcServer.STATUS_CONNECTING;
-        updateList();
+        updateListeners();
         rpcServer.rpcConnection = new RpcConnection();
         try {
             rpcServer.rpcConnection.connect(rpcServer);
             if (rpcServer.rpcToken == null) {
                 rpcServer.status = RpcServer.STATUS_AUTHORISATION_FAILED;
-                updateList();
+                updateListeners();
             } else {
                 rpcServer.status = RpcServer.STATUS_AUTHORISED;
-                updateList();
+                updateListeners();
             }
         } catch (IOException e) {
             rpcServer.status = RpcServer.STATUS_CONNECTION_FAILED;
-            updateList();
+            updateListeners();
         }
     }
 

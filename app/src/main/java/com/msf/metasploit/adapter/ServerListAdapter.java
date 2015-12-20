@@ -19,10 +19,9 @@ public class ServerListAdapter extends ArrayAdapter<RpcServer> {
     private Activity activity;
     private List<RpcServer> innerList;
 
-    public ServerListAdapter(Activity context, int resource, int textViewResourceId, List<RpcServer> objects) {
-        super(context, resource, textViewResourceId, objects);
+    public ServerListAdapter(Activity context) {
+        super(context, 0);
         activity = context;
-        innerList = objects;
     }
 
     private View.OnClickListener onItemClicked = new View.OnClickListener() {
@@ -42,10 +41,9 @@ public class ServerListAdapter extends ArrayAdapter<RpcServer> {
         ImageView imageviewDelete;
     }
 
-    @Override
-    public void notifyDataSetChanged() {
-        innerList = Msf.get().getServerList();
-        super.notifyDataSetChanged();
+    public void updateView() {
+        innerList = Msf.get().msfServerList.getServerList();
+        super.notifyDataSetInvalidated();
     }
 
     @Override

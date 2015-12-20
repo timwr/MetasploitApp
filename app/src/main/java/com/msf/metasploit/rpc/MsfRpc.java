@@ -100,32 +100,31 @@ public class MsfRpc {
         Object[] paramsNew = new Object[params.length + 1];
         paramsNew[0] = rpcToken;
         System.arraycopy(params, 0, paramsNew, 1, params.length);
+        return exec(methodName, paramsNew);
+    }
+
+    /** Method that sends a call to the server and received a response; only allows one at a time */
+    private Map exec(String methname, Object[] params) {
 
         if (BuildConfig.DEBUG) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cmd: ");
-            stringBuilder.append(methodName);
-            for (Object a : paramsNew) {
+            stringBuilder.append(methname);
+            for (Object a : params) {
                 stringBuilder.append(" ");
                 stringBuilder.append(String.valueOf(a));
             }
             Log.e(MsfRpc.class.getSimpleName(), stringBuilder.toString());
         }
 
-        Map result = exec(methodName, paramsNew);
-
-        if (BuildConfig.DEBUG) {
-            Log.e(MsfRpc.class.getSimpleName(), "result " + result);
-        }
-
-        return result;
-    }
-
-    /** Method that sends a call to the server and received a response; only allows one at a time */
-    private Map exec(String methname, Object[] params) {
         try {
             writeCall(methname, params);
             Object response = readResp();
+
+            if (BuildConfig.DEBUG) {
+                Log.e(MsfRpc.class.getSimpleName(), "result " + response);
+            }
+
             if (response instanceof Map) {
                 return (Map)response;
             }

@@ -21,6 +21,7 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
     private ServerListAdapter listAdapter;
 
     private MsfServerList msfServerList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,9 +30,8 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
         msfServerList = Msf.get().msfServerList;
         final List<RpcServer> serverList = msfServerList.getServerList();
 
-
         listviewServers = (ListView) findViewById(R.id.listview_servers);
-        listAdapter = new ServerListAdapter(this, 0, 0, serverList);
+        listAdapter = new ServerListAdapter(this);
         listviewServers.setAdapter(listAdapter);
         listviewServers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -43,7 +43,7 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
     }
 
     private void updateView() {
-        listAdapter.notifyDataSetChanged();
+        listAdapter.updateView();
     }
 
     @Override
@@ -51,6 +51,14 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
         super.onStart();
         updateView();
         msfServerList.addListener(this);
+
+//        if (BuildConfig.DEBUG) {
+//            RpcServer emulator = DefaultRpcServer.createDefaultRpcServer("10.0.2.2");
+//            RpcServer autoConnect = DefaultRpcServer.createDefaultRpcServer();
+//            msfServerList.getServerList().add(autoConnect);
+//            msfServerList.connectAsync(autoConnect);
+//            startServerDetailActivity(autoConnect);
+//        }
     }
 
     @Override
@@ -79,6 +87,7 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
             MsfServerList.toIntent(intent, rpcServer);
         }
         startActivity(intent);
+        msfServerList.removeListener(this);
     }
 }
 

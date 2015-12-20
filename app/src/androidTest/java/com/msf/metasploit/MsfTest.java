@@ -14,8 +14,8 @@ public class MsfTest extends AndroidTestCase {
 
     public void testLogin() throws IOException {
         Msf msf = new Msf();
-        msf.addRpcServer(DefaultRpcServer.createDefaultRpcServer());
-        RpcServer rpcServer = msf.getServerList().get(0);
+        RpcServer rpcServer = DefaultRpcServer.createDefaultRpcServer();
+        msf.msfServerList.serverList.add(rpcServer);
         assertTrue(rpcServer.status == 0);
         msf.msfServerList.connectServer(rpcServer);
         assertTrue(rpcServer.status == RpcServer.STATUS_AUTHORISED);

@@ -14,15 +14,13 @@ import android.widget.TextView;
 import com.msf.metasploit.Msf;
 import com.msf.metasploit.MsfServerList;
 import com.msf.metasploit.R;
+import com.msf.metasploit.adapter.ConsolePresenter;
+import com.msf.metasploit.model.Console;
 import com.msf.metasploit.model.RpcServer;
 
-import java.util.HashMap;
-
-public class ConsoleFragment extends Fragment {
+public class ConsoleFragment extends Fragment implements ConsolePresenter.UpdateListener {
 
     private static final String ID = "id";
-
-    private String consoleId;
 
     public static ConsoleFragment newInstance(String id, RpcServer rpcServer) {
         ConsoleFragment consoleFragment = new ConsoleFragment();
@@ -38,7 +36,10 @@ public class ConsoleFragment extends Fragment {
     private TextView textviewPrompt;
     private EditText edittextInput;
 
+    private String consoleId;
     private RpcServer rpcServer;
+    private ConsolePresenter consolePresenter;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,7 +53,7 @@ public class ConsoleFragment extends Fragment {
         edittextInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
-                if ( (actionId == EditorInfo.IME_ACTION_DONE) || ((event.getKeyCode() == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN ))){
+                if ((actionId == EditorInfo.IME_ACTION_DONE) || ((event.getKeyCode() == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN))) {
                     String text = edittextInput.getText().toString() + "\n";
                     writeCommand(text);
                     edittextInput.setText("");
@@ -62,103 +63,77 @@ public class ConsoleFragment extends Fragment {
             }
         });
 
-        rpcServer = Msf.get().msfServerList.fromIntent(getActivity().getIntent());
         Bundle bundle = getArguments();
         consoleId = bundle.getString(ID);
+        rpcServer = Msf.get().msfServerList.fromIntent(getActivity().getIntent());
+
+        System.err.println("rpc " + rpcServer);
+        System.err.println("console " + consoleId);
+
+        consolePresenter = new ConsolePresenter();
+        consolePresenter.rpcConnection = rpcServer.getRpc();
+        consolePresenter.console = new Console();
+        consolePresenter.console.id = consoleId;
+
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        consolePresenter.addListener(this);
+    }
+
+    @Override
+    public void onStop() {
+        consolePresenter.removeListener(this);
+        super.onStop();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
         updateContent();
     }
 
+    private void updateView() {
+        updateView(consolePresenter.console);
+    }
+
+    @Override
+    public void onUpdated() {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                updateView();
+            }
+        };
+        getActivity().runOnUiThread(runnable);
+    }
+
     private void updateContent() {
-        /*
-        AsyncTask<Void, Void, HashMap<String, String>> updateTask = new AsyncTask<Void, Void, HashMap<String, String>>() {
-
-            @Override
-            protected HashMap<String, String> doInBackground(Void... params) {
-                try {
-                    MsfController msfController = null;//MsfController.getInstance();
-                    MsfRpc msgRpcImpl = null;//msfController.getMsgRpcImpl();
-
-                    if (consoleId == null) {
-                        Object console = msgRpcImpl.execute(RpcConstants.CONSOLE_CREATE);
-                        HashMap<String, String> consoleInfo = (HashMap<String, String>)console;
-                        consoleId = consoleInfo.get("id");
-                    }
-
-                    HashMap<String, String> consoleMap;
-                    consoleMap = (HashMap<String, String>) msgRpcImpl.execute(RpcConstants.CONSOLE_READ, new Object[] { consoleId });
-                    return consoleMap;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(HashMap<String,String> result) {
-                Log.e("e", "onPostExecute" + result);
-                if (result != null) {
-                    updateView(result);
-                }
-            };
-
-        };
-        updateTask.execute();*/
+        consolePresenter.update();
     }
 
-    private void updateView(HashMap<String, String> consoleObject) {
-        String prompt = consoleObject.get("prompt");
-        if (prompt != null) {
-            prompt = prompt.replaceAll("\\x01|\\x02", "");
-            textviewPrompt.setText(prompt);
-        }
-        String data = consoleObject.get("data");
-        if (data != null) {
-            textviewConsole.append(data);
-            scrollviewConsole.post(new Runnable() {
-                @Override
-                public void run() {
-                    scrollviewConsole.fullScroll(ScrollView.FOCUS_DOWN);
-                    edittextInput.requestFocus();
-                }
-            });
-        }
+    private void updateScroll() {
+         scrollviewConsole.post(new Runnable() {
+            @Override
+            public void run() {
+                scrollviewConsole.fullScroll(ScrollView.FOCUS_DOWN);
+                edittextInput.requestFocus();
+            }
+        });
     }
 
-    private void writeCommand(final String command) {
-        /*
-        AsyncTask<Void, Void, Void> updateTask = new AsyncTask<Void, Void, Void>() {
+    private void updateView(Console console) {
+        textviewPrompt.setText(console.prompt);
+        textviewConsole.setText(console.text);
+        updateScroll();
+    }
 
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    MsfController msfController = null;//MsfController.getInstance();
-                    MsfRpc msgRpcImpl = null;//msfController.getMsgRpcImpl();
-
-                    if (consoleId != null) {
-                        msgRpcImpl.execute(RpcConstants.CONSOLE_WRITE, new Object[] { consoleId, command });
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                textviewConsole.append(textviewPrompt.getText());
-                textviewConsole.append(command);
-                updateContent();
-            }
-        };
-        updateTask.execute();*/
+    private void writeCommand(String command) {
+        consolePresenter.sendCommand(command);
+        consolePresenter.update();
     }
 
 }

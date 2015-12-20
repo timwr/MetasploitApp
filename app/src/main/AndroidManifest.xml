@@ -48,25 +48,6 @@
             </intent-filter>
         </activity>
 
-        <!-- <activity android:name="com.metasploit.msf.activities.ConsoleActivity" > -->
-        <!-- </activity> -->
-        <!--  -->
-        <!-- <activity android:name="com.metasploit.msf.activities.SessionActivity" > -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="android.intent.action.VIEW" /> -->
-
-
-        <!-- <category android:name="android.intent.category.DEFAULT" /> -->
-        <!-- <category android:name="android.intent.category.BROWSABLE" /> -->
-
-
-        <!-- <data -->
-        <!-- android:host="session" -->
-        <!-- android:pathPattern="/.*" -->
-        <!-- android:scheme="session" /> -->
-        <!-- </intent-filter> -->
-        <!-- </activity> -->
-
         <receiver
             android:name=".GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
@@ -78,11 +59,9 @@
         </receiver>
 
         <service android:name=".GcmIntentService" />
-        <service android:name=".rpc.RpcService" />
 
         <activity
-            android:name=".activities.ServerDetailActivity"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:name=".activities.ServerDetailActivity" >
         </activity>
 
         <activity

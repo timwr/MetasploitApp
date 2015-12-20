@@ -3,8 +3,6 @@ package com.msf.metasploit.model;
 
 import com.msf.metasploit.rpc.RpcConnection;
 
-import java.io.IOException;
-
 public class RpcServer extends SavedRpcServer {
 
     public static final int STATUS_NEW = 0;
@@ -21,8 +19,8 @@ public class RpcServer extends SavedRpcServer {
         return status;
     }
 
-    public void updateModel() throws IOException {
-        rpcConnection.updateModel(this);
+    public RpcConnection getRpc() {
+        return rpcConnection;
     }
 
     public MsfModel getModel() {

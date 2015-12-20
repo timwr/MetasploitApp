@@ -5,6 +5,6 @@ public class Console extends RpcObject {
 
     public String id;
     public String prompt;
-    public StringBuffer text;
+    public StringBuffer text = new StringBuffer();
 
 }
