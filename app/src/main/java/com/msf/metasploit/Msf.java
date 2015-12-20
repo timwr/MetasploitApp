@@ -15,4 +15,5 @@ public class Msf {
     public void addRpcServer(RpcServer rpcServer) {
         msfServerList.getServerList().add(rpcServer);
     }
+
 }

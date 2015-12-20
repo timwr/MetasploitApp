@@ -1,8 +1,6 @@
 
 package com.msf.metasploit.rpc;
 
-import android.net.Uri;
-
 import org.msgpack.core.MessagePack;
 import org.msgpack.core.MessagePacker;
 import org.msgpack.core.MessageUnpacker;
@@ -37,10 +35,11 @@ import javax.net.ssl.X509TrustManager;
 public class MsfRpc {
 
 	private URL u;
-	private URLConnection huc; // new for each call
+
+    private URLConnection huc; // new for each call
     private String rpcToken;
 
-	public Uri createURL(String host, int port, boolean ssl) {
+	public void createURL(String host, int port, boolean ssl) {
         try {
             if (ssl) { // Install the all-trusting trust manager & HostnameVerifier
                 SSLContext sc = SSLContext.getInstance("SSL");
@@ -69,11 +68,9 @@ public class MsfRpc {
             } else {
                 u = new URL("http", host, port, "/api/1.1/");
             }
-            return Uri.parse(u.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
 	}
 
     public String connect(String username, String password) {
@@ -91,15 +88,11 @@ public class MsfRpc {
         return rpcToken;
     }
 
-    public String getRpcToken() {
-        return rpcToken;
-    }
-
-    public Map execute(String methodName) throws IOException {
+    private Map execute(String methodName) throws IOException {
         return execute(methodName, new Object[]{});
     }
 
-    public Map execute(String methodName, Object[] params) throws IOException {
+    private Map execute(String methodName, Object[] params) throws IOException {
         Object[] paramsNew = new Object[params.length + 1];
         paramsNew[0] = rpcToken;
         System.arraycopy(params, 0, paramsNew, 1, params.length);

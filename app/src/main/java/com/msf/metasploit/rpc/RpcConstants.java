@@ -1,6 +1,6 @@
 package com.msf.metasploit.rpc;
 
-public class RpcConstants {
+public interface RpcConstants {
 
 	public static final String CORE_VERSION = "core.version";
 	public static final String AUTH_LOGIN = "auth.login";

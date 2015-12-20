@@ -8,7 +8,6 @@ import java.util.List;
 public class MsfServerList {
 
     public List<RpcServer> serverList = new ArrayList<RpcServer>();
-
     public List<RpcServer> getServerList() {
         return serverList;
     }
