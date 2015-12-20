@@ -88,11 +88,11 @@ public class MsfRpc {
         return rpcToken;
     }
 
-    private Map execute(String methodName) throws IOException {
+    public Map execute(String methodName) throws IOException {
         return execute(methodName, new Object[]{});
     }
 
-    private Map execute(String methodName, Object[] params) throws IOException {
+    public Map execute(String methodName, Object[] params) throws IOException {
         Object[] paramsNew = new Object[params.length + 1];
         paramsNew[0] = rpcToken;
         System.arraycopy(params, 0, paramsNew, 1, params.length);

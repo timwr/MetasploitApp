@@ -28,7 +28,6 @@ public class RpcServer {
     }
 
     public void updateModel() {
-
-
+        rpcConnection.updateModel(this);
     }
 }
