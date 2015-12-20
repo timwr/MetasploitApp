@@ -8,16 +8,16 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.msf.metasploit.R;
-import com.msf.metasploit.model.MsfServer;
+import com.msf.metasploit.model.RpcServer;
 
 import java.util.List;
 
-public class ServerListAdapter extends ArrayAdapter<MsfServer> {
+public class ServerListAdapter extends ArrayAdapter<RpcServer> {
 
     private Activity activity;
-    private List<MsfServer> innerList;
+    private List<RpcServer> innerList;
 
-    public ServerListAdapter(Activity context, int resource, int textViewResourceId, List<MsfServer> objects) {
+    public ServerListAdapter(Activity context, int resource, int textViewResourceId, List<RpcServer> objects) {
         super(context, resource, textViewResourceId, objects);
         activity = context;
         innerList = objects;
@@ -41,9 +41,9 @@ public class ServerListAdapter extends ArrayAdapter<MsfServer> {
         }
 
         ViewHolder holder = (ViewHolder) rowView.getTag();
-        MsfServer item = innerList.get(position);
-        holder.textviewName.setText(item.rpcAddress);
-        if (item.rpcToken != null) {
+        RpcServer item = innerList.get(position);
+        holder.textviewName.setText(item.getRpcServerName());
+        if (item.isAuthenticated()) {
             holder.textviewStatus.setText("Status: Authenticated");
         } else {
             holder.textviewStatus.setText("Status: Saved");

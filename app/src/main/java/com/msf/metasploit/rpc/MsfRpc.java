@@ -3,8 +3,6 @@ package com.msf.metasploit.rpc;
 
 import android.net.Uri;
 
-import com.msf.metasploit.model.MsfServer;
-
 import org.msgpack.core.MessagePack;
 import org.msgpack.core.MessagePacker;
 import org.msgpack.core.MessageUnpacker;
@@ -38,24 +36,9 @@ import javax.net.ssl.X509TrustManager;
 
 public class MsfRpc {
 
-    private MsfServer msfServer;
 	private URL u;
 	private URLConnection huc; // new for each call
     private String rpcToken;
-
-    public MsfRpc() {
-    }
-
-    public MsfRpc(MsfServer msfServer) {
-        Uri uri = Uri.parse(msfServer.rpcAddress);
-        String host = uri.getHost();
-        int port = uri.getPort();
-        if (port == -1) {
-            port = 55553;
-        }
-        createURL(host, port, true);
-        rpcToken = msfServer.rpcToken;
-    }
 
 	public Uri createURL(String host, int port, boolean ssl) {
         try {
@@ -170,8 +153,6 @@ public class MsfRpc {
 			out = ((IntegerValue)src).asInt();
 		}
 		else if (src instanceof MapValue) {
-//            MapValue mapValue;
-//            out = mapValue.map();
 			Set ents = ((MapValue)src).entrySet();
 			out = new HashMap();
 			for (Object ento : ents) {
@@ -240,7 +221,6 @@ public class MsfRpc {
 		huc.setReadTimeout(0);
 		OutputStream os = huc.getOutputStream();
         MessagePacker pk = MessagePack.newDefaultPacker(os);
-//        pk.packValue()
         pk.packArrayHeader(args.length + 1);
         pk.packString(methodName);
 		for(Object o : args)
@@ -255,11 +235,6 @@ public class MsfRpc {
 	private Object readResp() throws Exception {
 		InputStream is = huc.getInputStream();
 		MessageUnpacker mpo = MessagePack.newDefaultUnpacker(is);
-//        mpo.
-//        System.err.println("format " + mpo.getNextFormat());
-//        ImmutableValue immutableValue = mpo.unpackValue();
-//        immutableValue.
-//        ValueType valueType = mpo.getNextFormat().getValueType();
 		return unMsg(mpo.unpackValue());
 	}
 }

@@ -4,21 +4,14 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
-import com.msf.metasploit.MsfApplication;
 import com.msf.metasploit.R;
 import com.msf.metasploit.model.Defaults;
-import com.msf.metasploit.model.MsfServer;
-import com.msf.metasploit.rpc.MsfController;
-import com.msf.metasploit.rpc.MsfRpc;
 
 public class ServerDetailActivity extends Activity {
-
-    private MsfServer msfServer;
 
     private EditText edittextIp;
     private EditText edittextPort;
@@ -60,28 +53,14 @@ public class ServerDetailActivity extends Activity {
             return;
         }
 
-        if (intent.hasExtra(MsfServer.MSF_SERVER)) {
-            msfServer = MsfApplication.getMsfMain().getMsfSession(intent.getStringExtra(MsfServer.MSF_SERVER));
-        }
-        if (msfServer == null) {
-            msfServer = new MsfServer();
+        if (progressDialog != null) {
+            progressDialog.cancel();
+            progressDialog = null;
         }
 
-        if (MsfController.CONNECT.equals(intent.getAction())) {
-            if (progressDialog != null) {
-                progressDialog.cancel();
-                progressDialog = null;
-            }
+        new AlertDialog.Builder(this).setMessage("Connection error").show();
 
-            String result = intent.getStringExtra(MsfController.RESULT);
-            if (result == null) {
-                startActivity(new Intent(this, MainActivity.class));
-                finish();
-            } else {
-                new AlertDialog.Builder(this).setMessage("Connection error: " + result).show();
-            }
-        }
-
+    /*
         Uri uri = intent.getData();
         if (uri != null) {
             String user = uri.getUserInfo();
@@ -100,29 +79,14 @@ public class ServerDetailActivity extends Activity {
                 connect(null);
             }
         }
+        */
     }
 
     public void connect(View view) {
-//        Intent msgIntent = new Intent(this, RpcService.class);
-//        msgIntent.putExtra(MsfController.CONNECT, true);
-//        msgIntent.putExtra(MsfController.PASSWORD, edittextPass.getText().toString());
-//        String uriString = "msf://" + edittextUser.getText() + "@" + edittextIp.getText() + ":" + edittextPort.getText();
-//        msgIntent.setData(Uri.parse(uriString));
-//        startService(msgIntent);
-
         progressDialog =  new ProgressDialog(this);
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Connecting");
         progressDialog.show();
-
-        msfServer.rpcAddress = "https://" + edittextIp.getText() + ":" + edittextPort.getText();
-        msfServer.status = MsfServer.STATUS_CONNECTING;
-
-        MsfRpc msfRpc = new MsfRpc(msfServer);
-        msfRpc.createURL(Defaults.DEFAULT_HOST, Integer.valueOf(Defaults.DEFAULT_PORT), true);
-        msfRpc.connect(Defaults.DEFAULT_USER, Defaults.DEFAULT_PASSWORD);
-        msfRpc.getRpcToken();
-
     }
 
 }

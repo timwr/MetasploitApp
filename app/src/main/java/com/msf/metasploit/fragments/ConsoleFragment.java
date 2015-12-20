@@ -1,9 +1,7 @@
 package com.msf.metasploit.fragments;
 
 import android.app.Fragment;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +12,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.msf.metasploit.R;
-import com.msf.metasploit.rpc.MsfRpc;
-import com.msf.metasploit.rpc.MsfController;
-import com.msf.metasploit.rpc.RpcConstants;
 
 import java.util.HashMap;
 
@@ -64,6 +59,7 @@ public class ConsoleFragment extends Fragment {
     }
 
     private void updateContent() {
+        /*
         AsyncTask<Void, Void, HashMap<String, String>> updateTask = new AsyncTask<Void, Void, HashMap<String, String>>() {
 
             @Override
@@ -96,7 +92,7 @@ public class ConsoleFragment extends Fragment {
             };
 
         };
-        updateTask.execute();
+        updateTask.execute();*/
     }
 
     private void updateView(HashMap<String, String> consoleObject) {
@@ -119,6 +115,7 @@ public class ConsoleFragment extends Fragment {
     }
 
     private void writeCommand(final String command) {
+        /*
         AsyncTask<Void, Void, Void> updateTask = new AsyncTask<Void, Void, Void>() {
 
             @Override
@@ -144,7 +141,7 @@ public class ConsoleFragment extends Fragment {
                 updateContent();
             }
         };
-        updateTask.execute();
+        updateTask.execute();*/
     }
 
     @Override

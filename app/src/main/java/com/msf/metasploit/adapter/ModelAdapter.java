@@ -7,19 +7,13 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
-import com.msf.metasploit.model.MsfModel;
-import com.msf.metasploit.model.MsfServer;
+import com.msf.metasploit.model.RpcServer;
 
 import java.util.List;
 
 public class ModelAdapter {
 
     public static void buildDrawerFromModel(Drawer drawer) {
-
-        MsfModel model = null;//MsfModel.getInstance();
-
-        model.getJobs();
-        model.getModule();
 
         drawer.removeAllItems();
         drawer.addItems(
@@ -35,11 +29,11 @@ public class ModelAdapter {
         );
     }
 
-    public static IProfile[] buildProfiles(List<MsfServer> msfServers) {
-        IProfile[] profiles = new IProfile[msfServers.size()];
-        for (int i = 0; i < msfServers.size(); i++) {
-            MsfServer current = msfServers.get(i);
-            final IProfile profile = new ProfileDrawerItem().withName(current.rpcAddress).withIdentifier(i);
+    public static IProfile[] buildProfiles(List<RpcServer> rpcServers) {
+        IProfile[] profiles = new IProfile[rpcServers.size()];
+        for (int i = 0; i < rpcServers.size(); i++) {
+            RpcServer current = rpcServers.get(i);
+            final IProfile profile = new ProfileDrawerItem().withName(current.getRpcServerName()).withIdentifier(current.uid);
             profiles[i] = profile;
         }
         return profiles;
