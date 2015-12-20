@@ -6,9 +6,11 @@ import android.test.AndroidTestCase;
 import com.msf.metasploit.model.DefaultRpcServer;
 import com.msf.metasploit.model.RpcServer;
 
+import java.io.IOException;
+
 public class MsfTest extends AndroidTestCase {
 
-    public void testLoginAndGenerateModels() {
+    public void testLoginAndGenerateModels() throws IOException {
         Msf msf = new Msf();
         msf.addRpcServer(DefaultRpcServer.createDefaultRpcServer());
         RpcServer rpcServer = msf.getServerList().get(0);
@@ -25,6 +27,7 @@ public class MsfTest extends AndroidTestCase {
 //        assertTrue(rpcServer.isAuthenticated());
 
         rpcServer.updateModel();
+        assertNotNull(rpcServer.getModel().getConsoles());
     }
 //
 //    public void skipTestLoginTwoServers() {

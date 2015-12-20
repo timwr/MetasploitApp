@@ -4,10 +4,11 @@ package com.msf.metasploit.model;
 import com.msf.metasploit.rpc.RpcConstants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MsfModel {
+public class MsfModel implements RpcConstants {
 
     private List<Console> consoles;
     private List<Job> jobs;
@@ -36,7 +37,18 @@ public class MsfModel {
     }
 
     public Object updateModel(String cmd, Object object) {
-        if (cmd.equals(RpcConstants.PLUGIN_LOADED)) {
+        if (cmd.equals(CONSOLE_LIST)) {
+            HashMap<String, List> consoleMap = (HashMap<String, List>) object;
+            List consoleList = consoleMap.get("consoles");
+            consoles = new ArrayList<>();
+            for (Object item : consoleList) {
+                HashMap<String, String> consoleResult = (HashMap<String, String>)item;
+                Console console = new Console();
+                console.id = consoleResult.get("id");
+                consoles.add(console);
+            }
+        }
+        else if (cmd.equals(RpcConstants.PLUGIN_LOADED)) {
             plugins = (List<String>) ((Map)object).get("plugins");
             for (Plugin plugin : pluginlist) {
                 plugin.enabled = plugins.contains(plugin.id);
@@ -58,5 +70,9 @@ public class MsfModel {
         }
 
         return object;
+    }
+
+    public List<Console> getConsoles() {
+        return consoles;
     }
 }

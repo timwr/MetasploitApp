@@ -6,6 +6,7 @@ import java.util.Map;
 
 
 public class Session extends RpcObject {
+    String id;
     Map fields;
     public Session(String id, Map fields) {
         this.id = id;
