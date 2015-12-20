@@ -38,12 +38,14 @@ public class RpcServerView extends FrameLayout {
         addView(view);
     }
 
-    public void setRpcServer(RpcServer rpcServer) {
+    public void updateView(RpcServer rpcServer) {
         textviewName.setText(rpcServer.getRpcServerName());
         if (rpcServer.getStatus() == RpcServer.STATUS_NEW) {
             textviewStatus.setText("");
         } else if (rpcServer.getStatus() == RpcServer.STATUS_CONNECTING) {
             textviewStatus.setText("Connecting...");
+        } else if (rpcServer.getStatus() == RpcServer.STATUS_AUTHORISED) {
+            textviewStatus.setText("Connected");
         } else {
             textviewStatus.setText("Status: " + rpcServer.getStatus());
         }

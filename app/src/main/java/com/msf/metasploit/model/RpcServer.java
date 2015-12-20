@@ -21,21 +21,6 @@ public class RpcServer extends SavedRpcServer {
         return status;
     }
 
-    public void connect() throws IOException {
-        status = STATUS_CONNECTING;
-        rpcConnection = new RpcConnection();
-        try {
-            rpcConnection.connect(this);
-            if (rpcToken == null) {
-                status = STATUS_AUTHORISATION_FAILED;
-            } else {
-                status = STATUS_AUTHORISED;
-            }
-        } catch (IOException e) {
-            status = STATUS_CONNECTION_FAILED;
-        }
-    }
-
     public void updateModel() throws IOException {
         rpcConnection.updateModel(this);
     }

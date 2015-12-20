@@ -47,10 +47,10 @@ public class MsfServerList {
         try {
             rpcServer.rpcConnection.connect(rpcServer);
             if (rpcServer.rpcToken == null) {
-                rpcServer.status = RpcServer.STATUS_AUTHORISED;
+                rpcServer.status = RpcServer.STATUS_AUTHORISATION_FAILED;
                 updateList();
             } else {
-                rpcServer.status = RpcServer.STATUS_AUTHORISATION_FAILED;
+                rpcServer.status = RpcServer.STATUS_AUTHORISED;
                 updateList();
             }
         } catch (IOException e) {

@@ -2,6 +2,7 @@ package com.msf.metasploit.activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -67,6 +68,11 @@ public class ServerDetailActivity extends Activity implements MsfServerList.Upda
 
     @Override
     public void onUpdated() {
+        if (rpcServer.status == RpcServer.STATUS_AUTHORISED) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra(ServerDetailActivity.RPC_SERVER_ID, rpcServer.uid);
+            startActivity(intent);
+        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -76,7 +82,7 @@ public class ServerDetailActivity extends Activity implements MsfServerList.Upda
     }
 
     private void updateView(RpcServer rpcServer) {
-        rpcServerView.setRpcServer(rpcServer);
+        rpcServerView.updateView(rpcServer);
         edittextIp.setText(rpcServer.rpcHost);
         edittextUser.setText(rpcServer.rpcUser);
         edittextPort.setText(String.valueOf(rpcServer.rpcPort));

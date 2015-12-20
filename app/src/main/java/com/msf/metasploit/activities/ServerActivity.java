@@ -30,7 +30,8 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
         msfServerList = Msf.get().msfServerList;
         final List<RpcServer> serverList = msfServerList.getServerList();
         if (serverList.size() == 0) {
-            serverList.add(DefaultRpcServer.createDefaultRpcServer());
+            RpcServer rpcServer = DefaultRpcServer.createDefaultRpcServer("10.0.2.2");
+            serverList.add(rpcServer);
         }
 
         listviewServers = (ListView) findViewById(R.id.listview_servers);

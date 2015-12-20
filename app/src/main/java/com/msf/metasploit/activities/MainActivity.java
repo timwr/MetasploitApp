@@ -18,8 +18,13 @@ import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.util.KeyboardUtil;
+import com.msf.metasploit.Msf;
 import com.msf.metasploit.R;
+import com.msf.metasploit.adapter.ModelAdapter;
 import com.msf.metasploit.fragments.ConsoleFragment;
+import com.msf.metasploit.model.RpcServer;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,12 +42,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        List<MsfServer> serverList = MsfApplication.getMsfMain().getMsfRpcSessions();
+        List<RpcServer> serverList = Msf.get().msfServerList.getServerList();
         // Create the AccountHeader
         accountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withCompactStyle(true)
-//                .addProfiles(ModelAdapter.buildProfiles(serverList))
+                .addProfiles(ModelAdapter.buildProfiles(serverList))
                 .addProfiles(
                         new ProfileSettingDrawerItem().withName("Add RPC Server").withDescription("Add new RPC server").withIcon(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_plus).actionBar().paddingDp(5).colorRes(R.color.material_drawer_primary_text)).withIdentifier(ADD_NEW_SERVER),
                         new ProfileSettingDrawerItem().withName("Manage RPC Servers").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(MODIFY_SERVER)

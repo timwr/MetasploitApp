@@ -65,7 +65,7 @@ public class ServerListAdapter extends ArrayAdapter<RpcServer> {
 
         ViewHolder holder = (ViewHolder) rowView.getTag();
         RpcServer item = innerList.get(position);
-        holder.rpcServerView.setRpcServer(item);
+        holder.rpcServerView.updateView(item);
         holder.imageviewDelete.setTag(position);
         holder.imageviewEdit.setTag(position);
         return rowView;

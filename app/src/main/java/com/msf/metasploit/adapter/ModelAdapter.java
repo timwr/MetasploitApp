@@ -14,7 +14,6 @@ import java.util.List;
 public class ModelAdapter {
 
     public static void buildDrawerFromModel(Drawer drawer) {
-
         drawer.removeAllItems();
         drawer.addItems(
                 new PrimaryDrawerItem().withName("Name").withIcon(GoogleMaterial.Icon.gmd_sun).withIdentifier(1),
