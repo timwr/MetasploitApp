@@ -11,7 +11,10 @@ import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.msf.metasploit.Msf;
+import com.msf.metasploit.MsfServerList;
 import com.msf.metasploit.R;
+import com.msf.metasploit.model.RpcServer;
 
 import java.util.HashMap;
 
@@ -21,9 +24,10 @@ public class ConsoleFragment extends Fragment {
 
     private String consoleId;
 
-    public static ConsoleFragment newInstance(String id) {
+    public static ConsoleFragment newInstance(String id, RpcServer rpcServer) {
         ConsoleFragment consoleFragment = new ConsoleFragment();
         Bundle bundle = new Bundle();
+        bundle.putInt(MsfServerList.RPC_SERVER_ID, rpcServer.uid);
         bundle.putString(ID, id);
         consoleFragment.setArguments(bundle);
         return consoleFragment;
@@ -33,6 +37,8 @@ public class ConsoleFragment extends Fragment {
     private TextView textviewConsole;
     private TextView textviewPrompt;
     private EditText edittextInput;
+
+    private RpcServer rpcServer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,7 +61,18 @@ public class ConsoleFragment extends Fragment {
                 return false;
             }
         });
+
+        rpcServer = Msf.get().msfServerList.fromIntent(getActivity().getIntent());
+        Bundle bundle = getArguments();
+        consoleId = bundle.getString(ID);
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        updateContent();
     }
 
     private void updateContent() {
@@ -142,13 +159,6 @@ public class ConsoleFragment extends Fragment {
             }
         };
         updateTask.execute();*/
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        updateContent();
     }
 
 }

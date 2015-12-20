@@ -1,7 +1,6 @@
 package com.msf.metasploit.activities;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -15,13 +14,10 @@ import com.msf.metasploit.view.RpcServerView;
 
 public class ServerDetailActivity extends Activity implements MsfServerList.UpdateListener {
 
-    public static final String RPC_SERVER_ID = "rpc_server_id";
-
     private EditText edittextIp;
     private EditText edittextPort;
     private EditText edittextUser;
     private EditText edittextPass;
-    private ProgressDialog progressDialog;
 
     private MsfServerList msfServerList;
     private RpcServer rpcServer;
@@ -39,18 +35,8 @@ public class ServerDetailActivity extends Activity implements MsfServerList.Upda
         rpcServerView = (RpcServerView) findViewById(R.id.rpcserverview_server);
 
         msfServerList = Msf.get().msfServerList;
+        rpcServer = msfServerList.fromIntent(getIntent());
 
-        int rpcServerId = getIntent().getIntExtra(RPC_SERVER_ID, 0);
-        if (rpcServerId != 0) {
-            for (RpcServer rpcServer : Msf.get().getServerList()) {
-                if (rpcServer.uid == rpcServerId) {
-                    this.rpcServer = rpcServer;
-                }
-            }
-        }
-        if (rpcServer == null) {
-            rpcServer = new RpcServer();
-        }
         updateView(rpcServer);
     }
 
@@ -70,7 +56,7 @@ public class ServerDetailActivity extends Activity implements MsfServerList.Upda
     public void onUpdated() {
         if (rpcServer.status == RpcServer.STATUS_AUTHORISED) {
             Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra(ServerDetailActivity.RPC_SERVER_ID, rpcServer.uid);
+            MsfServerList.toIntent(intent, rpcServer);
             startActivity(intent);
         }
         runOnUiThread(new Runnable() {

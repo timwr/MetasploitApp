@@ -1,5 +1,8 @@
 package com.msf.metasploit;
 
+import android.content.Intent;
+
+import com.msf.metasploit.model.DefaultRpcServer;
 import com.msf.metasploit.model.RpcServer;
 import com.msf.metasploit.rpc.Async;
 import com.msf.metasploit.rpc.RpcConnection;
@@ -11,9 +14,25 @@ import java.util.List;
 
 public class MsfServerList {
 
+    public static final String RPC_SERVER_ID = "rpc_server_id";
+
     public List<RpcServer> serverList = new ArrayList<RpcServer>();
+
     public List<RpcServer> getServerList() {
+        if (serverList.size() == 0) {
+            serverList.add(DefaultRpcServer.createDefaultRpcServer());
+            RpcServer rpcServer = DefaultRpcServer.createDefaultRpcServer("10.0.2.2");
+            serverList.add(rpcServer);
+        }
         return serverList;
+    }
+
+    public RpcServer fromIntent(Intent intent) {
+        return getRpcServer(intent.getIntExtra(RPC_SERVER_ID, 0));
+    }
+
+    public static void toIntent(Intent intent, RpcServer rpcServer) {
+        intent.putExtra(RPC_SERVER_ID, rpcServer.uid);
     }
 
     private List<UpdateListener> listeners = new LinkedList<>();
@@ -24,6 +43,15 @@ public class MsfServerList {
 
     public void removeListener(UpdateListener listener) {
         listeners.remove(listener);
+    }
+
+    public RpcServer getRpcServer(int rpcServerId) {
+        for (RpcServer rpcServer : Msf.get().getServerList()) {
+            if (rpcServer.uid == rpcServerId) {
+                return rpcServer;
+            }
+        }
+        throw new RuntimeException();
     }
 
     public interface UpdateListener {

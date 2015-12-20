@@ -1,6 +1,10 @@
 
 package com.msf.metasploit.rpc;
 
+import android.util.Log;
+
+import com.msf.metasploit.BuildConfig;
+
 import org.msgpack.core.MessagePack;
 import org.msgpack.core.MessagePacker;
 import org.msgpack.core.MessageUnpacker;
@@ -96,7 +100,24 @@ public class MsfRpc {
         Object[] paramsNew = new Object[params.length + 1];
         paramsNew[0] = rpcToken;
         System.arraycopy(params, 0, paramsNew, 1, params.length);
+
+        if (BuildConfig.DEBUG) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("cmd: ");
+            stringBuilder.append(methodName);
+            for (Object a : paramsNew) {
+                stringBuilder.append(" ");
+                stringBuilder.append(String.valueOf(a));
+            }
+            Log.e(MsfRpc.class.getSimpleName(), stringBuilder.toString());
+        }
+
         Map result = exec(methodName, paramsNew);
+
+        if (BuildConfig.DEBUG) {
+            Log.e(MsfRpc.class.getSimpleName(), "result " + result);
+        }
+
         return result;
     }
 

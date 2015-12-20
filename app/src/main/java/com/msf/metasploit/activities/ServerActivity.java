@@ -11,7 +11,6 @@ import com.msf.metasploit.Msf;
 import com.msf.metasploit.MsfServerList;
 import com.msf.metasploit.R;
 import com.msf.metasploit.adapter.ServerListAdapter;
-import com.msf.metasploit.model.DefaultRpcServer;
 import com.msf.metasploit.model.RpcServer;
 
 import java.util.List;
@@ -29,10 +28,7 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
 
         msfServerList = Msf.get().msfServerList;
         final List<RpcServer> serverList = msfServerList.getServerList();
-        if (serverList.size() == 0) {
-            RpcServer rpcServer = DefaultRpcServer.createDefaultRpcServer("10.0.2.2");
-            serverList.add(rpcServer);
-        }
+
 
         listviewServers = (ListView) findViewById(R.id.listview_servers);
         listAdapter = new ServerListAdapter(this, 0, 0, serverList);
@@ -80,7 +76,7 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
     public void startServerDetailActivity(RpcServer rpcServer) {
         Intent intent = new Intent(this, ServerDetailActivity.class);
         if (rpcServer != null) {
-            intent.putExtra(ServerDetailActivity.RPC_SERVER_ID, rpcServer.uid);
+            MsfServerList.toIntent(intent, rpcServer);
         }
         startActivity(intent);
     }

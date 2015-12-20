@@ -19,20 +19,22 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.util.KeyboardUtil;
 import com.msf.metasploit.Msf;
+import com.msf.metasploit.MsfServerList;
 import com.msf.metasploit.R;
 import com.msf.metasploit.adapter.ModelAdapter;
 import com.msf.metasploit.fragments.ConsoleFragment;
 import com.msf.metasploit.model.RpcServer;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int ADD_NEW_SERVER = 1;
     private static final int MODIFY_SERVER = 2;
 
-    private Drawer result;
+    private Drawer drawer;
     private AccountHeader accountHeader;
+
+    private MsfServerList msfServerList;
+    private RpcServer rpcServer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +44,13 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        List<RpcServer> serverList = Msf.get().msfServerList.getServerList();
+        msfServerList = Msf.get().msfServerList;
+        rpcServer = msfServerList.fromIntent(getIntent());
+
         // Create the AccountHeader
         accountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withCompactStyle(true)
-                .addProfiles(ModelAdapter.buildProfiles(serverList))
                 .addProfiles(
                         new ProfileSettingDrawerItem().withName("Add RPC Server").withDescription("Add new RPC server").withIcon(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_plus).actionBar().paddingDp(5).colorRes(R.color.material_drawer_primary_text)).withIdentifier(ADD_NEW_SERVER),
                         new ProfileSettingDrawerItem().withName("Manage RPC Servers").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(MODIFY_SERVER)
@@ -67,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
 
-        result = new DrawerBuilder()
+        drawer = new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(toolbar)
                 .withHasStableIds(true)
@@ -98,23 +101,31 @@ public class MainActivity extends AppCompatActivity {
                 .withSavedInstance(savedInstanceState)
                 .build();
 
-        result.keyboardSupportEnabled(this, true);
+        drawer.keyboardSupportEnabled(this, true);
 
         if (savedInstanceState == null) {
             selectItem(0);
         }
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ModelAdapter.updateView(drawer, rpcServer);
+        ModelAdapter.updateHeader(accountHeader, rpcServer, msfServerList);
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState = result.saveInstanceState(outState);
+        outState = drawer.saveInstanceState(outState);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onBackPressed() {
-        if (result != null && result.isDrawerOpen()) {
-            result.closeDrawer();
+        if (drawer != null && drawer.isDrawerOpen()) {
+            drawer.closeDrawer();
         } else {
             super.onBackPressed();
         }
@@ -122,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void selectItem(int position) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment consoleFragment = new ConsoleFragment();
+        Fragment consoleFragment = ConsoleFragment.newInstance(null, rpcServer);
         ft.replace(R.id.frame_container, consoleFragment).commit();
         setTitle("Console");
     }
