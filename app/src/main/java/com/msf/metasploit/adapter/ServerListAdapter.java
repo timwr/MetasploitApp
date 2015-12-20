@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
-import com.msf.metasploit.Msf;
 import com.msf.metasploit.R;
 import com.msf.metasploit.model.RpcServer;
 import com.msf.metasploit.view.RpcServerView;
@@ -19,9 +18,10 @@ public class ServerListAdapter extends ArrayAdapter<RpcServer> {
     private Activity activity;
     private List<RpcServer> innerList;
 
-    public ServerListAdapter(Activity context) {
-        super(context, 0);
+    public ServerListAdapter(Activity context, List<RpcServer> innerList) {
+        super(context, 0, innerList);
         activity = context;
+        this.innerList = innerList;
     }
 
     private View.OnClickListener onItemClicked = new View.OnClickListener() {
@@ -39,11 +39,6 @@ public class ServerListAdapter extends ArrayAdapter<RpcServer> {
         RpcServerView rpcServerView;
         ImageView imageviewEdit;
         ImageView imageviewDelete;
-    }
-
-    public void updateView() {
-        innerList = Msf.get().msfServerList.getServerList();
-        super.notifyDataSetInvalidated();
     }
 
     @Override

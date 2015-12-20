@@ -79,7 +79,7 @@ public class ConsolePresenter {
             String command = commandList.toString();
             commandList.setLength(0);
             rpcConnection.execute(RpcConstants.CONSOLE_WRITE, new Object[]{console.id, command});
-            console.text.append(">");
+            console.text.append(console.prompt);
             console.text.append(command);
         }
 
@@ -88,11 +88,12 @@ public class ConsolePresenter {
         while (busy) {
             consoleObject = (HashMap<String, Object>) rpcConnection.execute(RpcConstants.CONSOLE_READ, new Object[]{console.id});
             busy = (Boolean) consoleObject.get("busy");
-            String prompt = (String) consoleObject.get("prompt");
-            if (prompt != null) {
-                prompt = prompt.replaceAll("\\x01|\\x02", "");
-                console.prompt = prompt;
-            }
+        }
+
+        String prompt = (String) consoleObject.get("prompt");
+        if (prompt != null) {
+            prompt = prompt.replaceAll("\\x01|\\x02", "");
+            console.prompt = prompt;
         }
 
         String data = (String) consoleObject.get("data");

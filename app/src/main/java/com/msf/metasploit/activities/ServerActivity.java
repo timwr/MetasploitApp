@@ -7,10 +7,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.msf.metasploit.BuildConfig;
 import com.msf.metasploit.Msf;
 import com.msf.metasploit.MsfServerList;
 import com.msf.metasploit.R;
 import com.msf.metasploit.adapter.ServerListAdapter;
+import com.msf.metasploit.model.DefaultRpcServer;
 import com.msf.metasploit.model.RpcServer;
 
 import java.util.List;
@@ -31,7 +33,7 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
         final List<RpcServer> serverList = msfServerList.getServerList();
 
         listviewServers = (ListView) findViewById(R.id.listview_servers);
-        listAdapter = new ServerListAdapter(this);
+        listAdapter = new ServerListAdapter(this, serverList);
         listviewServers.setAdapter(listAdapter);
         listviewServers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -43,22 +45,22 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
     }
 
     private void updateView() {
-        listAdapter.updateView();
+        listAdapter.notifyDataSetInvalidated();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        if (BuildConfig.DEBUG) {
+            RpcServer emulator = DefaultRpcServer.createDefaultRpcServer("10.0.2.2");
+            RpcServer autoConnect = DefaultRpcServer.createDefaultRpcServer();
+            msfServerList.getServerList().add(autoConnect);
+            msfServerList.connectAsync(autoConnect);
+            startServerDetailActivity(autoConnect);
+        }
+
         updateView();
         msfServerList.addListener(this);
-
-//        if (BuildConfig.DEBUG) {
-//            RpcServer emulator = DefaultRpcServer.createDefaultRpcServer("10.0.2.2");
-//            RpcServer autoConnect = DefaultRpcServer.createDefaultRpcServer();
-//            msfServerList.getServerList().add(autoConnect);
-//            msfServerList.connectAsync(autoConnect);
-//            startServerDetailActivity(autoConnect);
-//        }
     }
 
     @Override
@@ -87,7 +89,6 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
             MsfServerList.toIntent(intent, rpcServer);
         }
         startActivity(intent);
-        msfServerList.removeListener(this);
     }
 }
 

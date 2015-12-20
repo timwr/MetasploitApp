@@ -36,14 +36,13 @@ public class ServerDetailActivity extends Activity implements MsfServerList.Upda
 
         msfServerList = Msf.get().msfServerList;
         rpcServer = msfServerList.fromIntent(getIntent());
-
-        updateView(rpcServer);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         msfServerList.addListener(this);
+        updateView(rpcServer);
     }
 
     @Override
