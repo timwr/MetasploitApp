@@ -6,6 +6,10 @@ import java.util.List;
 
 public class Msf {
 
+    public static Msf get() {
+        return MsfApplication.Msf();
+    }
+
     public final MsfServerList msfServerList = new MsfServerList();
 
     public List<RpcServer> getServerList() {

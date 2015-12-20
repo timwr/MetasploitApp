@@ -11,4 +11,8 @@ public class MsfServerList {
     public List<RpcServer> getServerList() {
         return serverList;
     }
+
+    public void loadSavedServerList() {
+
+    }
 }

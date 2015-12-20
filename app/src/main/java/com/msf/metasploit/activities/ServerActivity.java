@@ -8,7 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import com.msf.metasploit.MsfApplication;
+import com.msf.metasploit.Msf;
 import com.msf.metasploit.R;
 import com.msf.metasploit.adapter.ServerListAdapter;
 import com.msf.metasploit.model.DefaultRpcServer;
@@ -25,7 +25,7 @@ public class ServerActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server);
 
-        List<RpcServer> serverList = MsfApplication.Msf().getServerList();
+        final List<RpcServer> serverList = Msf.get().getServerList();
         serverList.add(DefaultRpcServer.createDefaultRpcServer());
 
         listviewServers = (ListView) findViewById(R.id.listview_servers);
@@ -34,20 +34,21 @@ public class ServerActivity extends Activity {
         listviewServers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (view.getId() == R.id.imageview_delete) {
-                    System.err.println("lol");
-                }
-                startServerDetailActivity();
+                RpcServer rpcServer = serverList.get(i);
+                startServerDetailActivity(rpcServer);
             }
         });
     }
 
     public void clickAddServer(View view) {
-        startServerDetailActivity();
+        startServerDetailActivity(null);
     }
 
-    public void startServerDetailActivity() {
+    public void startServerDetailActivity(RpcServer rpcServer) {
         Intent intent = new Intent(this, ServerDetailActivity.class);
+        if (rpcServer != null) {
+            intent.putExtra(ServerDetailActivity.RPC_SERVER_ID, rpcServer.uid);
+        }
         startActivity(intent);
     }
 }

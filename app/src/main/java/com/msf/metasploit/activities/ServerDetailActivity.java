@@ -3,15 +3,18 @@ package com.msf.metasploit.activities;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
+import com.msf.metasploit.Msf;
 import com.msf.metasploit.R;
-import com.msf.metasploit.model.Defaults;
+import com.msf.metasploit.model.RpcServer;
+import com.msf.metasploit.rpc.Async;
 
 public class ServerDetailActivity extends Activity {
+
+    public static final String RPC_SERVER_ID = "rpc_server_id";
 
     private EditText edittextIp;
     private EditText edittextPort;
@@ -29,30 +32,24 @@ public class ServerDetailActivity extends Activity {
         edittextUser = (EditText) findViewById(R.id.edittext_user);
         edittextPass = (EditText) findViewById(R.id.edittext_pass);
 
-        edittextIp.setText(Defaults.DEFAULT_HOST);
-        edittextUser.setText(Defaults.DEFAULT_USER);
-        edittextPort.setText(Defaults.DEFAULT_PORT);
-        edittextPass.setText(Defaults.DEFAULT_PASSWORD);
-
-        handleIntent(getIntent());
-    }
-
-    private void updateView() {
-
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        handleIntent(intent);
-
-    }
-
-    private void handleIntent(Intent intent) {
-        if (intent == null) {
-            return;
+        int rpcServerId = getIntent().getIntExtra(RPC_SERVER_ID, 0);
+        if (rpcServerId != 0) {
+            for (RpcServer rpcServer : Msf.get().getServerList()) {
+                if (rpcServer.uid == rpcServerId) {
+                    updateView(rpcServer);
+                }
+            }
         }
+    }
 
+    private void updateView(RpcServer rpcServer) {
+        edittextIp.setText(rpcServer.rpcHost);
+        edittextUser.setText(rpcServer.rpcUser);
+        edittextPort.setText(String.valueOf(rpcServer.rpcPort));
+        edittextPass.setText("");
+    }
+
+    private void showProgress() {
         if (progressDialog != null) {
             progressDialog.cancel();
             progressDialog = null;
@@ -87,6 +84,13 @@ public class ServerDetailActivity extends Activity {
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Connecting");
         progressDialog.show();
+
+        new Async() {
+            @Override
+            protected Void doInBackground(Void... arg0) {
+                return super.doInBackground(arg0);
+            }
+        }.execute();
     }
 
 }

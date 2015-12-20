@@ -5,20 +5,10 @@ import com.msf.metasploit.rpc.RpcConnection;
 
 import java.io.IOException;
 
-public class RpcServer {
+public class RpcServer extends SavedRpcServer {
 
-    public int uid;
-    public int rpcPort;
     public int status;
-    public String rpcHost;
-    public String rpcToken;
-    public String rpcUser;
-    public String rpcPassword;
     public RpcConnection rpcConnection;
-
-    public String getRpcServerName() {
-        return "name";
-    }
 
     public boolean isAuthenticated() {
         return rpcToken != null;
@@ -36,4 +26,5 @@ public class RpcServer {
     public MsfModel getModel() {
         return rpcConnection.getModel();
     }
+
 }

@@ -11,13 +11,17 @@ import java.util.Map;
 public class MsfModel implements RpcConstants {
 
     private List<Console> consoles;
+
     private List<Job> jobs;
     private Map<String, Object> jobmap;
-    private List<Session> session;
+
+    private List<Session> sessions;
 
     private Module module = new Module();
+
     private List<Plugin> pluginlist;
     private List<String> plugins;
+
 //    pluginlist = new ArrayList<Plugin>();
 //    pluginlist.add(new Plugin("gcm_notify", "New session notification", new Intent()));
 //    pluginlist.add(new Plugin("auto_add_route", "Auto route new sessions", null));
@@ -61,6 +65,8 @@ public class MsfModel implements RpcConstants {
             module.payloads = (List<String>) ((Map)object).get("payloads");
         } else if (cmd.equals(RpcConstants.MODULE_OPTIONS)) {
             ModuleOption.addModuleOptions(module, object);
+        } else if (cmd.equals(SESSION_LIST)) {
+            sessions = new ArrayList<>();
         } else if (cmd.equals(RpcConstants.JOB_LIST)) {
             jobmap = (Map) object;
         } else if (cmd.equals(RpcConstants.JOB_INFO)) {
@@ -74,5 +80,9 @@ public class MsfModel implements RpcConstants {
 
     public List<Console> getConsoles() {
         return consoles;
+    }
+
+    public List<Session> getSessions() {
+        return sessions;
     }
 }

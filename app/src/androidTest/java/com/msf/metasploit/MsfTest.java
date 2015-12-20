@@ -10,24 +10,37 @@ import java.io.IOException;
 
 public class MsfTest extends AndroidTestCase {
 
-    public void testLoginAndGenerateModels() throws IOException {
+    private RpcServer rpcServer;
+
+    public void testLogin() throws IOException {
         Msf msf = new Msf();
         msf.addRpcServer(DefaultRpcServer.createDefaultRpcServer());
         RpcServer rpcServer = msf.getServerList().get(0);
-
         assertFalse(rpcServer.isAuthenticated());
         rpcServer.connect();
         assertTrue(rpcServer.isAuthenticated());
+        this.rpcServer = rpcServer;
+    }
 
-        rpcServer.rpcConnection = null;
-        rpcServer.rpcPassword = null;
+    public void testLoginAndGenerateModels() throws IOException {
+        if (rpcServer == null) {
+            testLogin();
+        }
 
+//        rpcServer.rpcConnection = null;
+//        rpcServer.rpcPassword = null;
 //        assertFalse(rpcServer.isAuthenticated());
 //        rpcServer.connect();
 //        assertTrue(rpcServer.isAuthenticated());
 
         rpcServer.updateModel();
         assertNotNull(rpcServer.getModel().getConsoles());
+        assertNotNull(rpcServer.getModel().getJobs());
+        assertNotNull(rpcServer.getModel().getSessions());
+
+//        rpcServer.rpcConnection.execute(RpcConstants.CONSOLE_CREATE);
+//        rpcServer.updateModel();
+//        assertTrue(rpcServer.getModel().getConsoles().size() > 0);
     }
 //
 //    public void skipTestLoginTwoServers() {

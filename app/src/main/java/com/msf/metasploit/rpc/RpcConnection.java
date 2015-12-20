@@ -20,12 +20,21 @@ public class RpcConnection implements RpcConstants {
     }
 
     public void updateModel(RpcServer rpcServer) throws IOException {
-		Object consoles = msfRpc.execute(RpcConstants.CONSOLE_LIST);
-        msfModel.updateModel(CONSOLE_LIST, consoles);
-
+        for (String command : new String[] { CONSOLE_LIST, JOB_LIST, SESSION_LIST }) {
+            Object object = msfRpc.execute(command);
+            msfModel.updateModel(command, object);
+        }
     }
 
     public MsfModel getModel() {
         return msfModel;
+    }
+
+    public Object execute(String command) throws IOException{
+        return msfRpc.execute(command);
+    }
+
+    public Object execute(String command, Object[] args) throws IOException{
+        return msfRpc.execute(command, args);
     }
 }
