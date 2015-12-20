@@ -18,6 +18,14 @@
             android:layout_height="wrap_content"
             android:text="RPC Server:" />
 
+        <com.msf.metasploit.view.RpcServerView
+            android:id="@+id/rpcserverview_server"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            >
+        </com.msf.metasploit.view.RpcServerView>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >

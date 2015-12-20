@@ -9,15 +9,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content" >
 
-        <TextView
-            android:id="@+id/textview_name"
+        <com.msf.metasploit.view.RpcServerView
+            android:id="@+id/rpcserverview_server"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
+        </com.msf.metasploit.view.RpcServerView>
 
-        <TextView
-            android:id="@+id/textview_status"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <ImageView

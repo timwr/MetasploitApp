@@ -16,9 +16,9 @@ public class MsfTest extends AndroidTestCase {
         Msf msf = new Msf();
         msf.addRpcServer(DefaultRpcServer.createDefaultRpcServer());
         RpcServer rpcServer = msf.getServerList().get(0);
-        assertFalse(rpcServer.isAuthenticated());
-        rpcServer.connect();
-        assertTrue(rpcServer.isAuthenticated());
+        assertTrue(rpcServer.status == 0);
+        msf.msfServerList.connectServer(rpcServer);
+        assertTrue(rpcServer.status == RpcServer.STATUS_AUTHORISED);
         this.rpcServer = rpcServer;
     }
 

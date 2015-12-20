@@ -5,10 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
+import android.widget.ImageView;
 
+import com.msf.metasploit.Msf;
 import com.msf.metasploit.R;
 import com.msf.metasploit.model.RpcServer;
+import com.msf.metasploit.view.RpcServerView;
 
 import java.util.List;
 
@@ -23,9 +25,27 @@ public class ServerListAdapter extends ArrayAdapter<RpcServer> {
         innerList = objects;
     }
 
+    private View.OnClickListener onItemClicked = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            int position = (int) view.getTag();
+            if (view.getId() == R.id.imageview_delete) {
+                innerList.remove(position);
+                notifyDataSetChanged();
+            }
+        }
+    };
+
     static class ViewHolder {
-        public TextView textviewName;
-        public TextView textviewStatus;
+        RpcServerView rpcServerView;
+        ImageView imageviewEdit;
+        ImageView imageviewDelete;
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        innerList = Msf.get().getServerList();
+        super.notifyDataSetChanged();
     }
 
     @Override
@@ -35,20 +55,19 @@ public class ServerListAdapter extends ArrayAdapter<RpcServer> {
             LayoutInflater inflater = activity.getLayoutInflater();
             rowView = inflater.inflate(R.layout.item_server, parent, false);
             ViewHolder viewHolder = new ViewHolder();
-            viewHolder.textviewName = (TextView) rowView.findViewById(R.id.textview_name);
-            viewHolder.textviewStatus = (TextView) rowView.findViewById(R.id.textview_status);
+            viewHolder.rpcServerView = (RpcServerView) rowView.findViewById(R.id.rpcserverview_server);
+            viewHolder.imageviewEdit = (ImageView) rowView.findViewById(R.id.imageview_edit);
+            viewHolder.imageviewDelete = (ImageView) rowView.findViewById(R.id.imageview_delete);
+            viewHolder.imageviewEdit.setOnClickListener(onItemClicked);
+            viewHolder.imageviewDelete.setOnClickListener(onItemClicked);
             rowView.setTag(viewHolder);
         }
 
         ViewHolder holder = (ViewHolder) rowView.getTag();
         RpcServer item = innerList.get(position);
-        holder.textviewName.setText(item.getRpcServerName());
-        if (item.isAuthenticated()) {
-            holder.textviewStatus.setText("Status: Authenticated");
-        } else {
-            holder.textviewStatus.setText("Status: Saved");
-        }
-
+        holder.rpcServerView.setRpcServer(item);
+        holder.imageviewDelete.setTag(position);
+        holder.imageviewEdit.setTag(position);
         return rowView;
     }
 }
