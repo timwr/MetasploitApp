@@ -14,7 +14,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.msf.metasploit.R;
-import com.msf.metasploit.model.MsfRpc;
+import com.msf.metasploit.rpc.MsfRpc;
 import com.msf.metasploit.rpc.MsfController;
 import com.msf.metasploit.rpc.RpcConstants;
 
@@ -69,8 +69,8 @@ public class ConsoleFragment extends Fragment {
             @Override
             protected HashMap<String, String> doInBackground(Void... params) {
                 try {
-                    MsfController msfController = MsfController.getInstance();
-                    MsfRpc msgRpcImpl = msfController.getMsgRpcImpl();
+                    MsfController msfController = null;//MsfController.getInstance();
+                    MsfRpc msgRpcImpl = null;//msfController.getMsgRpcImpl();
 
                     if (consoleId == null) {
                         Object console = msgRpcImpl.execute(RpcConstants.CONSOLE_CREATE);
@@ -124,8 +124,8 @@ public class ConsoleFragment extends Fragment {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
-                    MsfController msfController = MsfController.getInstance();
-                    MsfRpc msgRpcImpl = msfController.getMsgRpcImpl();
+                    MsfController msfController = null;//MsfController.getInstance();
+                    MsfRpc msgRpcImpl = null;//msfController.getMsgRpcImpl();
 
                     if (consoleId != null) {
                         msgRpcImpl.execute(RpcConstants.CONSOLE_WRITE, new Object[] { consoleId, command });

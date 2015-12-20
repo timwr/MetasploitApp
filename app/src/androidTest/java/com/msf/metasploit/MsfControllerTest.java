@@ -2,34 +2,28 @@
 package com.msf.metasploit;
 
 import android.content.Intent;
+import android.test.AndroidTestCase;
 
-import com.msf.metasploit.model.Session;
+import com.msf.metasploit.model.Defaults;
+import com.msf.metasploit.model.MsfServer;
 import com.msf.metasploit.rpc.MsfController;
+import com.msf.metasploit.rpc.MsfMain;
 import com.msf.metasploit.rpc.RpcConstants;
 
-import junit.framework.TestCase;
-
 import java.util.HashMap;
-import java.util.List;
 
-public class MsfControllerTest extends TestCase {
+public class MsfControllerTest extends AndroidTestCase {
+
 
     private MsfController msfController;
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
-        if (msfController == null) {
-            msfController = MsfController.getInstance();
-            TestConstants.connect();
-        }
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        killJobs();
+        MsfMain msfMain = new MsfMain();
+        msfController = new MsfController(msfMain);
+        MsfServer msfServer = TestConstants.getDefaultServer();
+        msfMain.addMsfSession(msfServer);
+        msfController.handleIntent(MsfController.getConnectIntent(msfServer.id, Defaults.DEFAULT_USER, Defaults.DEFAULT_PASSWORD));
     }
 
     Object runCmd(String cmd,Object[] args) {
@@ -40,27 +34,29 @@ public class MsfControllerTest extends TestCase {
         return runCmd(cmd, null);
     }
 
-    public void killJobs() {
-        HashMap<String, Object> jobs = (HashMap<String, Object>) runCmd(RpcConstants.JOB_LIST);
+    public void testVersion() throws Exception {
+        HashMap<String, String> version = (HashMap<String, String>) runCmd(RpcConstants.CORE_VERSION);
+        assertEquals("1.0", version.get("api"));
+    }
 
-        for (Object object : jobs.keySet()) {
+
+//    public void killJobs() {
+//
+//        HashMap<String, Object> jobs = (HashMap<String, Object>) runCmd(RpcConstants.JOB_LIST);
+//
+//        for (Object object : jobs.keySet()) {
             // Object stopid = new Object[] {
             // object
             // };
             // HashMap<String, Object> jobstop = (HashMap<String, Object>)
             // msfController.runCmd(RpcConstants.JOB_STOP, stopid);
             // assertEquals("success", jobstop.get("result"));
-        }
+//        }
+//
+//    }
 
-    }
 
-    public void testVersion() throws Exception {
-
-        HashMap<String, String> version = (HashMap<String, String>) runCmd(RpcConstants.CORE_VERSION);
-        assertEquals("1.0", version.get("api"));
-
-    }
-
+    /*
     public void skiptestJobs() throws Exception {
 
 //        Job.getList(msfController.runCmd(RpcConstants.JOB_LIST));
@@ -124,4 +120,5 @@ public class MsfControllerTest extends TestCase {
 //         assertNotNull(id);
 //    }
 
+*/
 }

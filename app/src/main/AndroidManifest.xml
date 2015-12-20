@@ -22,7 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".activities.LoginActivity"
+            android:name=".activities.ServerActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop" >
             <intent-filter>
@@ -40,6 +40,11 @@
                     android:host="*"
                     android:pathPattern="/.*"
                     android:scheme="msf" />
+
+                <data
+                    android:host="*"
+                    android:pathPattern="/.*"
+                    android:scheme="msfs" />
             </intent-filter>
         </activity>
 
@@ -76,7 +81,7 @@
         <service android:name=".rpc.RpcService" />
 
         <activity
-            android:name=".activities.ServerActivity"
+            android:name=".activities.ServerDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
 

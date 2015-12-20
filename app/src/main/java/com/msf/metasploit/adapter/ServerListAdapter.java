@@ -44,9 +44,9 @@ public class ServerListAdapter extends ArrayAdapter<MsfServer> {
         MsfServer item = innerList.get(position);
         holder.textviewName.setText(item.rpcAddress);
         if (item.rpcToken != null) {
-            holder.textviewStatus.setText("Status: ");
+            holder.textviewStatus.setText("Status: Authenticated");
         } else {
-            holder.textviewStatus.setText("");
+            holder.textviewStatus.setText("Status: Saved");
         }
 
         return rowView;

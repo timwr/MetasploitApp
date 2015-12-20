@@ -1,20 +1,11 @@
 
 package com.msf.metasploit;
 
-import android.content.Intent;
+import android.test.InstrumentationTestCase;
 
-import com.msf.metasploit.model.Job;
-import com.msf.metasploit.model.MsfModel;
 import com.msf.metasploit.rpc.MsfController;
-import com.msf.metasploit.rpc.RpcConstants;
 
-import junit.framework.TestCase;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-public class MsfModelTest extends TestCase {
+public class MsfModelTest extends InstrumentationTestCase {
 
     private MsfController msfController;
 
@@ -23,7 +14,7 @@ public class MsfModelTest extends TestCase {
         super.setUp();
 
         if (msfController == null) {
-            msfController = MsfController.getInstance();
+//            msfController = MsfController.getInstance();
             TestConstants.connect();
         }
     }
@@ -52,6 +43,7 @@ public class MsfModelTest extends TestCase {
 
     public void testJobs() throws Exception {
 
+        /*
         Intent intent = msfController.runCmd(RpcConstants.JOB_LIST);
         MsfModel.getInstance().updateModel(intent);
 
@@ -78,6 +70,7 @@ public class MsfModelTest extends TestCase {
 
         jobs = MsfModel.getInstance().getJobs();
         assertEquals(1, jobs.size());
+        */
 
         // Map options = new HashMap();
         // options.put("LHOST", "192.168.0.3");

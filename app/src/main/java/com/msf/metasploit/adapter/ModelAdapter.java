@@ -16,7 +16,7 @@ public class ModelAdapter {
 
     public static void buildDrawerFromModel(Drawer drawer) {
 
-        MsfModel model = MsfModel.getInstance();
+        MsfModel model = null;//MsfModel.getInstance();
 
         model.getJobs();
         model.getModule();

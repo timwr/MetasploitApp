@@ -1,20 +1,15 @@
 
 package com.msf.metasploit.rpc;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.Uri;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.msf.metasploit.activities.LoginActivity;
-import com.msf.metasploit.model.MsfRpc;
+import com.msf.metasploit.model.MsfServer;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.MalformedURLException;
+import java.util.HashMap;
 
 public class MsfController {
 
@@ -25,12 +20,37 @@ public class MsfController {
     public static final String ARGS = "args";
     public static final String TAG = "tag";
 
-    public static void registerListener(Context context, String action, BroadcastReceiver responseListener) {
-        LocalBroadcastManager.getInstance(context).registerReceiver(responseListener, new IntentFilter(action));
+    private MsfMain msfMain;
+    private HashMap<String, MsfRpc> rpcConnections = new HashMap<>();
+
+    public MsfController(MsfMain msfMain) {
+        this.msfMain = msfMain;
     }
 
-    public static void unregisterListener(Context context, BroadcastReceiver responseListener) {
-        LocalBroadcastManager.getInstance(context).unregisterReceiver(responseListener);
+    public void handleIntent(Intent intent) {
+        String msfServerId = intent.getStringExtra(MsfServer.MSF_SERVER);
+
+        if (!rpcConnections.containsKey(msfServerId)) {
+            MsfServer msfServer = msfMain.getMsfSession(msfServerId);
+            MsfRpc msfRpc = new MsfRpc(msfServer);
+            rpcConnections.put(msfServerId, msfRpc);
+        }
+
+        runCmd(intent);
+    }
+
+//    public static void registerListener(Context context, String action, BroadcastReceiver responseListener) {
+//        LocalBroadcastManager.getInstance(context).registerReceiver(responseListener, new IntentFilter(action));
+//    }
+//
+//    public static void unregisterListener(Context context, BroadcastReceiver responseListener) {
+//        LocalBroadcastManager.getInstance(context).unregisterReceiver(responseListener);
+//    }
+
+    public static Intent getConnectIntent(String msfServerId, String username, String password) {
+        Intent intent = getIntent(CONNECT, new Object[]{ username, password }, null);
+        intent.putExtra(MsfServer.MSF_SERVER, msfServerId);
+        return intent;
     }
 
     public static Intent getIntent(String cmd, Object args, String tag) {
@@ -56,6 +76,8 @@ public class MsfController {
     }
 
     public Intent runCmd(Intent intent) {
+        String msfServerId = intent.getStringExtra(MsfServer.MSF_SERVER);
+        MsfRpc msfRpc = rpcConnections.get(msfServerId);
         String tag = intent.getStringExtra(TAG);
         String cmd = intent.getStringExtra(CMD);
         Object[] args = (Object[]) intent.getSerializableExtra(ARGS);
@@ -70,8 +92,7 @@ public class MsfController {
                 }
             }
             Log.e(MsfController.class.getSimpleName(), cmd + " " + argstring);
-            Object response = args != null ? msgRpcImpl.execute(cmd, args)
-                    : msgRpcImpl.execute(cmd);
+            Object response = msfRpc.execute(cmd, args);
             Log.e(MsfController.class.getSimpleName(), MsfController.RESULT + tag + "" + response);
             Intent result = new Intent(tag);
             result.putExtra(CMD, cmd);
@@ -82,71 +103,47 @@ public class MsfController {
         }
         return null;
     }
-
-    public static MsfController mInstance;
-
-    private MsfController() {
-    }
-
-    public static MsfController getInstance() {
-        if (mInstance == null) {
-            mInstance = new MsfController();
-        }
-        return mInstance;
-    }
-
-    private MsfRpc msgRpcImpl = null;
-
-    public MsfRpc getMsgRpcImpl() {
-        return msgRpcImpl;
-    }
-
-    public void connect(String host, int port, String username,
-            String password, boolean ssl) {
-        try {
-            msgRpcImpl = new MsfRpc(username, password, host, port, ssl);
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void startMsf(String host, int port, String username,
-            String password, boolean ssl) {
-        Log.e("e", "startMsf");
-        try {
-            connect(host, port, username, password, ssl);
-            
-            Log.e("e", "connected");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void handleIntent(Intent intent, Context context) {
-        if (intent.getBooleanExtra(CONNECT, false)) {
-            Uri uri = intent.getData();
-            String username = uri.getUserInfo();
-            String password = intent.getStringExtra(PASSWORD);
-            String host = uri.getHost();
-            int port = uri.getPort();
-            if (port == -1) {
-                port = 55553;
-            }
-            boolean useSSL = true;// uri.getScheme();
-
-            startMsf(host, port, username, password, useSSL);
-            
-            Intent rpcintent = new Intent(context, LoginActivity.class);
-            rpcintent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            rpcintent.setAction(CONNECT);
-            rpcintent.putExtra(RESULT, (msgRpcImpl != null) ? null : "-1");
-            context.startActivity(rpcintent);
-            
-        } else {
-
-            Intent result = runCmd(intent);
-            LocalBroadcastManager.getInstance(context).sendBroadcast(result);
-        }
-    }
+//
+//    public void connect(String host, int port, String username, String password, boolean ssl) {
+//        MsfRpc msfRpc = new MsfRpc();
+//        msfRpc.createURL(host, port, ssl);
+//        msfRpc.connect(username, password);
+//        msgRpcImpl = msfRpc;
+//    }
+//
+//    public void startMsf(String host, int port, String username, String password, boolean ssl) {
+//        try {
+//            connect(host, port, username, password, ssl);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void handleIntent(Intent intent, Context context) {
+//        if (intent.getBooleanExtra(CONNECT, false)) {
+//
+//            Uri uri = intent.getData();
+//            String username = uri.getUserInfo();
+//            String password = intent.getStringExtra(PASSWORD);
+//            String host = uri.getHost();
+//            int port = uri.getPort();
+//            if (port == -1) {
+//                port = 55553;
+//            }
+//            boolean useSSL = true;// uri.getScheme();
+//
+//            startMsf(host, port, username, password, useSSL);
+//
+//            Intent rpcintent = new Intent(context, ServerDetailActivity.class);
+//            rpcintent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            rpcintent.setAction(CONNECT);
+//            rpcintent.putExtra(RESULT, (msgRpcImpl != null) ? null : "-1");
+//            context.startActivity(rpcintent);
+//
+//        } else {
+//
+//            Intent result = runCmd(intent);
+//            LocalBroadcastManager.getInstance(context).sendBroadcast(result);
+//        }
+//    }
 }

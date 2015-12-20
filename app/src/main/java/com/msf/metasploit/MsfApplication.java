@@ -2,25 +2,23 @@ package com.msf.metasploit;
 
 
 import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
 
-import com.msf.metasploit.model.MsfMain;
+import com.msf.metasploit.rpc.MsfController;
+import com.msf.metasploit.rpc.MsfMain;
 
 public class MsfApplication extends Application {
 	
 	private static MsfApplication sInstance;
-	private static MsfMain msfMain;
 
-	private SharedPreferences sharedPreferences;
+	private static MsfMain msfMain;
+	private static MsfController msfController;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		sharedPreferences = getSharedPreferences("preferences", Context.MODE_PRIVATE);
-
 		sInstance = this;
-		msfMain = new MsfMain(this);
+		msfMain = new MsfMain();
+		msfController = new MsfController(msfMain);
 	}
 
 	public static MsfApplication getApplication() {
@@ -30,5 +28,8 @@ public class MsfApplication extends Application {
 	public static MsfMain getMsfMain() {
 		return msfMain;
 	}
-	
+
+	public static MsfController getMsfController() {
+		return msfController;
+	}
 }

@@ -1,10 +1,12 @@
 
-package com.msf.metasploit.model;
+package com.msf.metasploit.adapter;
 
 import android.content.Context;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.msf.metasploit.model.ModuleOption;
 
 public class ModuleOptionView extends LinearLayout {
 

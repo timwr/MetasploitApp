@@ -1,5 +1,9 @@
 
-package com.msf.metasploit.model;
+package com.msf.metasploit.rpc;
+
+import android.net.Uri;
+
+import com.msf.metasploit.model.MsfServer;
 
 import org.msgpack.core.MessagePack;
 import org.msgpack.core.MessagePacker;
@@ -15,7 +19,6 @@ import org.msgpack.value.RawValue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -31,74 +34,98 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-// Credits to scriptjunkie and mubix
+// Credits to scriptjunkie and rsmudge
 
 public class MsfRpc {
 
+    private MsfServer msfServer;
 	private URL u;
 	private URLConnection huc; // new for each call
     private String rpcToken;
 
-	public MsfRpc(String username, String password, String host, int port, boolean ssl) throws MalformedURLException {
-		if (ssl) { // Install the all-trusting trust manager & HostnameVerifier
-			try {
-				SSLContext sc = SSLContext.getInstance("SSL");
-				sc.init(null, new TrustManager[] {
-					new X509TrustManager() {
-						public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-							return null;
-						}
-						public void checkClientTrusted(
-							java.security.cert.X509Certificate[] certs, String authType) {
-						}
-						public void checkServerTrusted(
-							java.security.cert.X509Certificate[] certs, String authType) {
-						}
-					}
-				}, new java.security.SecureRandom());
+    public MsfRpc() {
+    }
 
-				HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-				HttpsURLConnection.setDefaultHostnameVerifier( new HostnameVerifier() {
-					public boolean verify(String string,SSLSession ssls) {
-						return true;
-					}
-				});
-			}
-			catch (Exception e) {
-			}
-			u = new URL("https", host, port, "/api/1.1/");
-		}
-		else {
-			u = new URL("http", host, port, "/api/1.1/");
-		}
+    public MsfRpc(MsfServer msfServer) {
+        Uri uri = Uri.parse(msfServer.rpcAddress);
+        String host = uri.getHost();
+        int port = uri.getPort();
+        if (port == -1) {
+            port = 55553;
+        }
+        createURL(host, port, true);
+        rpcToken = msfServer.rpcToken;
+    }
 
+	public Uri createURL(String host, int port, boolean ssl) {
+        try {
+            if (ssl) { // Install the all-trusting trust manager & HostnameVerifier
+                SSLContext sc = SSLContext.getInstance("SSL");
+                sc.init(null, new TrustManager[]{
+                        new X509TrustManager() {
+                            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                                return null;
+                            }
+
+                            public void checkClientTrusted(
+                                    java.security.cert.X509Certificate[] certs, String authType) {
+                            }
+
+                            public void checkServerTrusted(
+                                    java.security.cert.X509Certificate[] certs, String authType) {
+                            }
+                        }
+                }, new java.security.SecureRandom());
+                HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+                HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+                    public boolean verify(String string, SSLSession ssls) {
+                        return true;
+                    }
+                });
+                u = new URL("https", host, port, "/api/1.1/");
+            } else {
+                u = new URL("http", host, port, "/api/1.1/");
+            }
+            return Uri.parse(u.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+	}
+
+    public String connect(String username, String password) {
 		/* login to msf server */
 		Object[] params = new Object[]{ username, password };
-		Map results = exec("auth.login",params);
+		Map results = exec(RpcConstants.AUTH_LOGIN, params);
 
 		/* save the temp token (lasts for 5 minutes of inactivity) */
 		String tempToken = results.get("token").toString();
 
 		/* generate a non-expiring token and use that */
 		params = new Object[]{ tempToken };
-		results = exec("auth.token_generate", params);
+		results = exec(RpcConstants.AUTH_TOKEN_GENERATE, params);
 		rpcToken = results.get("token").toString();
-	}
+        return rpcToken;
+    }
 
-    public Object execute(String methodName) throws IOException {
+    public String getRpcToken() {
+        return rpcToken;
+    }
+
+    public Map execute(String methodName) throws IOException {
         return execute(methodName, new Object[]{});
     }
 
-    public Object execute(String methodName, Object[] params) throws IOException {
+    public Map execute(String methodName, Object[] params) throws IOException {
         Object[] paramsNew = new Object[params.length + 1];
         paramsNew[0] = rpcToken;
         System.arraycopy(params, 0, paramsNew, 1, params.length);
-        Object result = exec(methodName, paramsNew);
+        Map result = exec(methodName, paramsNew);
         return result;
     }
 
     /** Method that sends a call to the server and received a response; only allows one at a time */
-    private Map exec (String methname, Object[] params) {
+    private Map exec(String methname, Object[] params) {
         try {
             writeCall(methname, params);
             Object response = readResp();
@@ -204,7 +231,7 @@ public class MsfRpc {
     }
 
 	/** Creates an XMLRPC call from the given method name and parameters and sends it */
-	protected void writeCall(String methodName, Object[] args) throws Exception {
+	private void writeCall(String methodName, Object[] args) throws Exception {
 		huc = u.openConnection();
 		huc.setDoOutput(true);
 		huc.setDoInput(true);
@@ -225,7 +252,7 @@ public class MsfRpc {
 	}
 
 	/** Receives an RPC response and converts to an object */
-	protected Object readResp() throws Exception {
+	private Object readResp() throws Exception {
 		InputStream is = huc.getInputStream();
 		MessageUnpacker mpo = MessagePack.newDefaultUnpacker(is);
 //        mpo.

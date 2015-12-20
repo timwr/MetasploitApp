@@ -12,8 +12,6 @@ import java.util.Map;
 
 public class MsfModel {
 
-    public static MsfModel mInstance;
-    
     private List<Job> jobs;
     private Map<String, Object> jobmap;
     private List<String> plugins;
@@ -47,13 +45,6 @@ public class MsfModel {
         pluginlist = new ArrayList<Plugin>();
         pluginlist.add(new Plugin("gcm_notify", "New session notification", new Intent()));
         pluginlist.add(new Plugin("auto_add_route", "Auto route new sessions", null));
-    }
-
-    public static MsfModel getInstance() {
-        if (mInstance == null) {
-            mInstance = new MsfModel();
-        }
-        return mInstance;
     }
 
     public Object updateModel(Intent intent) {

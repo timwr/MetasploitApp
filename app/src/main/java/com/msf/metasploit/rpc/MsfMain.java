@@ -1,11 +1,13 @@
 
-package com.msf.metasploit.model;
+package com.msf.metasploit.rpc;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.msf.metasploit.MsfApplication;
+import com.msf.metasploit.model.MsfServer;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -13,17 +15,17 @@ import java.util.List;
 
 public class MsfMain {
 
-    private static final String MSF_RPC_SESSIONS = "msfRpcSessions";
     private static final String MSF_MAIN = "msfMain";
+    private static final String MSF_RPC_SESSIONS = "msfRpcSessions";
 
     private final Gson gson;
-    private SharedPreferences preferences;
+    private final SharedPreferences preferences;
 
-    public List<MsfServer> msfRpcSessions;
+    private List<MsfServer> msfRpcSessions;
 
-    public MsfMain(Context context) {
+    public MsfMain() {
         this.gson = new Gson();
-        this.preferences = context.getSharedPreferences(MSF_MAIN, Context.MODE_PRIVATE);
+        this.preferences = MsfApplication.getApplication().getSharedPreferences(MSF_MAIN, Context.MODE_PRIVATE);
         load();
     }
 
@@ -54,7 +56,7 @@ public class MsfMain {
         return msfServer.id;
     }
 
-    private void load() {
+    public void load() {
         String jsonSessions = preferences.getString(MSF_RPC_SESSIONS, null);
         if (jsonSessions == null) {
             msfRpcSessions = new ArrayList<>();
@@ -64,9 +66,8 @@ public class MsfMain {
         }
     }
 
-    private void save() {
+    public void save() {
         String jsonSession = gson.toJson(msfRpcSessions);
         preferences.edit().putString(MSF_RPC_SESSIONS, jsonSession).apply();
     }
-
 }
