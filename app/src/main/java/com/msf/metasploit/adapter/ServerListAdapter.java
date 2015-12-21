@@ -11,6 +11,7 @@ import com.msf.metasploit.R;
 import com.msf.metasploit.model.RpcServer;
 import com.msf.metasploit.view.RpcServerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ServerListAdapter extends ArrayAdapter<RpcServer> {
@@ -20,8 +21,8 @@ public class ServerListAdapter extends ArrayAdapter<RpcServer> {
 
     public ServerListAdapter(Activity context, List<RpcServer> innerList) {
         super(context, 0, innerList);
+        this.innerList = new ArrayList<>(innerList);
         activity = context;
-        this.innerList = innerList;
     }
 
     private View.OnClickListener onItemClicked = new View.OnClickListener() {
@@ -34,6 +35,11 @@ public class ServerListAdapter extends ArrayAdapter<RpcServer> {
             }
         }
     };
+
+    public void updateView() {
+        this.innerList = new ArrayList<>(innerList);
+        notifyDataSetChanged();
+    }
 
     static class ViewHolder {
         RpcServerView rpcServerView;
@@ -57,7 +63,7 @@ public class ServerListAdapter extends ArrayAdapter<RpcServer> {
         }
 
         ViewHolder holder = (ViewHolder) rowView.getTag();
-        RpcServer item = innerList.get(position);
+        RpcServer item = getItem(position);
         holder.rpcServerView.updateView(item);
         holder.imageviewDelete.setTag(position);
         holder.imageviewEdit.setTag(position);

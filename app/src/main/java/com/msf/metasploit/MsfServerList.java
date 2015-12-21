@@ -53,7 +53,8 @@ public class MsfServerList {
     }
 
     private void updateListeners() {
-        for (UpdateListener listener : listeners) {
+        List<UpdateListener> updateList = new ArrayList<UpdateListener>(listeners);
+        for (UpdateListener listener : updateList) {
             listener.onUpdated();
         }
     }

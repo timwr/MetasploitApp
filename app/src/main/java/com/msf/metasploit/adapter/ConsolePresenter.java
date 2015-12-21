@@ -31,15 +31,18 @@ public class ConsolePresenter {
         listeners.add(listener);
     }
 
-    private void refreshAfterInterval() {
-        handler.removeCallbacks(updateHandler);
+    private void refreshAfterInterval(long pollingInterval) {
+        handler.removeCallbacksAndMessages(null);
         if (listeners.size() > 0) {
-            handler.postDelayed(updateHandler, POLLING_INTERVAL);
+            handler.postDelayed(updateHandler, pollingInterval);
         }
     }
 
     public void removeListener(UpdateListener listener) {
         listeners.remove(listener);
+        if (listeners.size() == 0) {
+            handler.removeCallbacksAndMessages(null);
+        }
     }
 
     public interface UpdateListener {
@@ -84,12 +87,6 @@ public class ConsolePresenter {
         }
 
         HashMap<String, Object> consoleObject = (HashMap<String, Object>) rpcConnection.execute(RpcConstants.CONSOLE_READ, new Object[]{console.id});
-        Boolean busy = (Boolean) consoleObject.get("busy");
-        while (busy) {
-            consoleObject = (HashMap<String, Object>) rpcConnection.execute(RpcConstants.CONSOLE_READ, new Object[]{console.id});
-            busy = (Boolean) consoleObject.get("busy");
-        }
-
         String prompt = (String) consoleObject.get("prompt");
         if (prompt != null) {
             prompt = prompt.replaceAll("\\x01|\\x02", "");
@@ -101,7 +98,13 @@ public class ConsolePresenter {
             console.text.append(data);
         }
         updateListeners();
-        refreshAfterInterval();
+
+        Boolean busy = (Boolean) consoleObject.get("busy");
+        if (busy) {
+            refreshAfterInterval(100);
+        } else {
+            refreshAfterInterval(POLLING_INTERVAL);
+        }
     }
 
     public void update() {

@@ -67,9 +67,6 @@ public class ConsoleFragment extends Fragment implements ConsolePresenter.Update
         consoleId = bundle.getString(ID);
         rpcServer = Msf.get().msfServerList.fromIntent(getActivity().getIntent());
 
-        System.err.println("rpc " + rpcServer);
-        System.err.println("console " + consoleId);
-
         consolePresenter = new ConsolePresenter();
         consolePresenter.rpcConnection = rpcServer.getRpc();
         consolePresenter.console = new Console();

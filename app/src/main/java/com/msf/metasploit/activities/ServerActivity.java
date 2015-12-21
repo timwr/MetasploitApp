@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.msf.metasploit.BuildConfig;
 import com.msf.metasploit.Msf;
 import com.msf.metasploit.MsfServerList;
 import com.msf.metasploit.R;
@@ -29,10 +28,11 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server);
 
-        msfServerList = Msf.get().msfServerList;
-        final List<RpcServer> serverList = msfServerList.getServerList();
-
         listviewServers = (ListView) findViewById(R.id.listview_servers);
+
+        msfServerList = Msf.get().msfServerList;
+
+        final List<RpcServer> serverList = msfServerList.getServerList();
         listAdapter = new ServerListAdapter(this, serverList);
         listviewServers.setAdapter(listAdapter);
         listviewServers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -45,21 +45,19 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
     }
 
     private void updateView() {
-        listAdapter.notifyDataSetInvalidated();
+        listAdapter.updateView();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if (BuildConfig.DEBUG) {
-            RpcServer emulator = DefaultRpcServer.createDefaultRpcServer("10.0.2.2");
+        if (true) {
+//            RpcServer emulator = DefaultRpcServer.createDefaultRpcServer("10.0.2.2");
             RpcServer autoConnect = DefaultRpcServer.createDefaultRpcServer();
             msfServerList.getServerList().add(autoConnect);
             msfServerList.connectAsync(autoConnect);
             startServerDetailActivity(autoConnect);
         }
-
-        updateView();
         msfServerList.addListener(this);
     }
 

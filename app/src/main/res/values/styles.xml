@@ -16,8 +16,10 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="ConsoleText" >
+        <item name="android:antialias">true</item>
         <item name="android:textSize">10sp</item>
         <item name="android:typeface">monospace</item>
+        <item name="android:fontFamily">monospace</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
 
