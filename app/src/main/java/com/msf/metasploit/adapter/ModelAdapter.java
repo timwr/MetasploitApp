@@ -22,7 +22,6 @@ public class ModelAdapter {
 
     public static void updateView(Drawer drawer, RpcServer rpcServer) {
         drawer.removeAllItems();
-
         int identifier = 1;
         List<Console> consoles = rpcServer.getModel().getConsoles();
         if (consoles == null) {
@@ -34,7 +33,7 @@ public class ModelAdapter {
             drawer.addItem(new PrimaryDrawerItem().withName(consoleString).withIcon(GoogleMaterial.Icon.gmd_format_playlist_add).withIdentifier(++identifier));
             for (Console console : consoles) {
                 String consoleName = "Console: " + console.id;
-                drawer.addItem(new SecondaryDrawerItem().withName(consoleName).withIcon(GoogleMaterial.Icon.gmd_format_playlist_add).withIdentifier(++identifier));
+                drawer.addItem(new SecondaryDrawerItem().withName(consoleName).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_format_playlist_add).withIdentifier(++identifier));
             }
         }
 
@@ -43,7 +42,7 @@ public class ModelAdapter {
             drawer.addItem(new PrimaryDrawerItem().withName("Sessions").withIcon(GoogleMaterial.Icon.gmd_format_playlist_add).withIdentifier(++identifier));
             for (String id : sessions.keySet()) {
                 String consoleName = "Session: " + id;
-                drawer.addItem(new SecondaryDrawerItem().withName(consoleName).withIcon(GoogleMaterial.Icon.gmd_format_playlist_add).withIdentifier(++identifier));
+                drawer.addItem(new SecondaryDrawerItem().withName(consoleName).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_format_playlist_add).withIdentifier(++identifier));
             }
         }
     }
