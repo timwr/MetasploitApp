@@ -27,22 +27,14 @@ public class MsfTest extends AndroidTestCase {
             testLogin();
         }
 
-//        rpcServer.rpcConnection = null;
-//        rpcServer.rpcPassword = null;
-//        assertFalse(rpcServer.isAuthenticated());
-//        rpcServer.connect();
-//        assertTrue(rpcServer.isAuthenticated());
-
-        rpcServer.updateModel();
+        rpcServer.getRpc().updateModel();
         assertNotNull(rpcServer.getModel().getConsoles());
         assertNotNull(rpcServer.getModel().getJobs());
         assertNotNull(rpcServer.getModel().getSessions());
-
-//        rpcServer.rpcConnection.execute(RpcConstants.CONSOLE_CREATE);
-//        rpcServer.updateModel();
-//        assertTrue(rpcServer.getModel().getConsoles().size() > 0);
+        assertTrue(rpcServer.getModel().getSessions().size() > 0);
     }
-//
+
+
 //    public void skipTestLoginTwoServers() {
 //        Msf msf = new Msf();
 //        msf.addRpcServer(DefaultRpcServer.createDefaultRpcServer());

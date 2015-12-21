@@ -8,13 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.mikepenz.google_material_typeface_library.GoogleMaterial;
-import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.util.KeyboardUtil;
@@ -22,10 +19,11 @@ import com.msf.metasploit.Msf;
 import com.msf.metasploit.MsfServerList;
 import com.msf.metasploit.R;
 import com.msf.metasploit.adapter.ModelAdapter;
+import com.msf.metasploit.adapter.ModelPresenter;
 import com.msf.metasploit.fragments.TerminalFragment;
 import com.msf.metasploit.model.RpcServer;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ModelPresenter.UpdateListener {
 
     private static final int ADD_NEW_SERVER = 1;
     private static final int MODIFY_SERVER = 2;
@@ -33,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private Drawer drawer;
     private AccountHeader accountHeader;
 
+    private ModelPresenter modelPresenter;
     private MsfServerList msfServerList;
     private RpcServer rpcServer;
 
@@ -44,17 +43,11 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        msfServerList = Msf.get().msfServerList;
-        rpcServer = msfServerList.fromIntent(getIntent());
-
         // Create the AccountHeader
         accountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withCompactStyle(true)
-                .addProfiles(
-                        new ProfileSettingDrawerItem().withName("Add RPC Server").withDescription("Add new RPC server").withIcon(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_plus).actionBar().paddingDp(5).colorRes(R.color.material_drawer_primary_text)).withIdentifier(ADD_NEW_SERVER),
-                        new ProfileSettingDrawerItem().withName("Manage RPC Servers").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(MODIFY_SERVER)
-                )
+                .withHeaderBackground(R.drawable.side_nav_bar)
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
                     public boolean onProfileChanged(View view, IProfile profile, boolean current) {
@@ -103,17 +96,33 @@ public class MainActivity extends AppCompatActivity {
 
         drawer.keyboardSupportEnabled(this, true);
 
+        msfServerList = Msf.get().msfServerList;
+        rpcServer = msfServerList.fromIntent(getIntent());
+        modelPresenter = new ModelPresenter();
+        modelPresenter.setConnection(rpcServer.getRpc());
+
         if (savedInstanceState == null) {
             selectItem(0);
         }
     }
 
-
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
+        updateView();
+        modelPresenter.update();
+        modelPresenter.addListener(this);
+    }
+
+    private void updateView() {
         ModelAdapter.updateView(drawer, rpcServer);
         ModelAdapter.updateHeader(accountHeader, rpcServer, msfServerList);
+    }
+
+    @Override
+    protected void onStop() {
+        modelPresenter.removeListener(this);
+        super.onStop();
     }
 
     @Override
@@ -138,4 +147,13 @@ public class MainActivity extends AppCompatActivity {
         setTitle("Console");
     }
 
+    @Override
+    public void onUpdated() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updateView();
+            }
+        });
+    }
 }

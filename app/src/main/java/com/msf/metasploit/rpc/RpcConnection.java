@@ -26,14 +26,6 @@ public class RpcConnection implements RpcConstants {
         }
     }
 
-    public void update() {
-        try {
-            updateModel();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public MsfModel getModel() {
         return msfModel;
     }
@@ -44,16 +36,6 @@ public class RpcConnection implements RpcConstants {
 
     public Object execute(String command, Object[] args) throws IOException{
         return msfRpc.execute(command, args);
-    }
-
-    public void updateAsync() {
-        new Async() {
-            @Override
-            protected Void doInBackground(Void... arg0) {
-                update();
-                return super.doInBackground(arg0);
-            }
-        };
     }
 
 }

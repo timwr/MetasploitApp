@@ -15,6 +15,7 @@ public class MsfModel implements RpcConstants {
     private List<Job> jobs;
     private Map<String, Object> jobmap;
 
+    private Map<String, Map> sessionMap;
     private List<Session> sessions;
 
     private Module module = new Module();
@@ -51,8 +52,7 @@ public class MsfModel implements RpcConstants {
                 console.id = consoleResult.get("id");
                 consoles.add(console);
             }
-        }
-        else if (cmd.equals(RpcConstants.PLUGIN_LOADED)) {
+        } else if (cmd.equals(RpcConstants.PLUGIN_LOADED)) {
             plugins = (List<String>) ((Map)object).get("plugins");
             for (Plugin plugin : pluginlist) {
                 plugin.enabled = plugins.contains(plugin.id);
@@ -66,7 +66,7 @@ public class MsfModel implements RpcConstants {
         } else if (cmd.equals(RpcConstants.MODULE_OPTIONS)) {
             ModuleOption.addModuleOptions(module, object);
         } else if (cmd.equals(SESSION_LIST)) {
-            sessions = new ArrayList<>();
+            sessionMap = (Map<String, Map>) object;
         } else if (cmd.equals(RpcConstants.JOB_LIST)) {
             jobmap = (Map) object;
         } else if (cmd.equals(RpcConstants.JOB_INFO)) {
@@ -82,7 +82,7 @@ public class MsfModel implements RpcConstants {
         return consoles;
     }
 
-    public List<Session> getSessions() {
-        return sessions;
+    public Map<String,Map> getSessions() {
+        return sessionMap;
     }
 }

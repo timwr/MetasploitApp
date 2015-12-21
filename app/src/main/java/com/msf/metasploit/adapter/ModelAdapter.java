@@ -1,6 +1,5 @@
 package com.msf.metasploit.adapter;
 
-import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -17,32 +16,36 @@ import com.msf.metasploit.model.Console;
 import com.msf.metasploit.model.RpcServer;
 
 import java.util.List;
+import java.util.Map;
 
 public class ModelAdapter {
 
     public static void updateView(Drawer drawer, RpcServer rpcServer) {
         drawer.removeAllItems();
 
+        int identifier = 1;
         List<Console> consoles = rpcServer.getModel().getConsoles();
         if (consoles == null) {
             drawer.addItems(
-                    new PrimaryDrawerItem().withName("Loading...").withIcon(GoogleMaterial.Icon.gmd_sun).withIdentifier(1)
+                    new PrimaryDrawerItem().withName("Loading...").withIcon(GoogleMaterial.Icon.gmd_refresh).withIdentifier(++identifier)
             );
-            return;
+        } else {
+            String consoleString = "Console (" + consoles.size() + ")";
+            drawer.addItem(new PrimaryDrawerItem().withName(consoleString).withIcon(GoogleMaterial.Icon.gmd_format_playlist_add).withIdentifier(++identifier));
+            for (Console console : consoles) {
+                String consoleName = "Console: " + console.id;
+                drawer.addItem(new SecondaryDrawerItem().withName(consoleName).withIcon(GoogleMaterial.Icon.gmd_format_playlist_add).withIdentifier(++identifier));
+            }
         }
 
-        String consoleString = "Console (" + consoles.size() + ")";
-        drawer.addItems(
-                new PrimaryDrawerItem().withName(consoleString).withIcon(GoogleMaterial.Icon.gmd_sun).withIdentifier(1),
-//                        new PrimaryDrawerItem().withName(R.string.drawer_item_action_bar_drawer).withIcon(FontAwesome.Icon.faw_home).withBadge("22").withBadgeStyle(new BadgeStyle(Color.RED, Color.RED)).withIdentifier(2).withSelectable(false),
-//                        new PrimaryDrawerItem().withName(R.string.drawer_item_multi_drawer).withIcon(FontAwesome.Icon.faw_gamepad).withIdentifier(3),
-//                        new PrimaryDrawerItem().withName(R.string.drawer_item_non_translucent_status_drawer).withIcon(FontAwesome.Icon.faw_eye).withIdentifier(4),
-//                        new PrimaryDrawerItem().withDescription("A more complex sample").withName(R.string.drawer_item_advanced_drawer).withIcon(GoogleMaterial.Icon.gmd_adb).withIdentifier(5),
-//                        new PrimaryDrawerItem().withName(R.string.drawer_item_keyboard_util_drawer).withIcon(GoogleMaterial.Icon.gmd_labels).withIdentifier(6),
-//                        new SectionDrawerItem().withName(R.string.drawer_item_section_header),
-                new SecondaryDrawerItem().withName("String lol").withIcon(FontAwesome.Icon.faw_github),
-                new SecondaryDrawerItem().withName("String hello").withIcon(GoogleMaterial.Icon.gmd_format_color_fill).withTag("Bullhorn")
-        );
+        Map<String, Map> sessions = rpcServer.getModel().getSessions();
+        if (sessions != null) {
+            drawer.addItem(new PrimaryDrawerItem().withName("Sessions").withIcon(GoogleMaterial.Icon.gmd_format_playlist_add).withIdentifier(++identifier));
+            for (String id : sessions.keySet()) {
+                String consoleName = "Session: " + id;
+                drawer.addItem(new SecondaryDrawerItem().withName(consoleName).withIcon(GoogleMaterial.Icon.gmd_format_playlist_add).withIdentifier(++identifier));
+            }
+        }
     }
 
     public static void updateHeader(AccountHeader accountHeader, RpcServer rpcServer, MsfServerList msfServerList) {
