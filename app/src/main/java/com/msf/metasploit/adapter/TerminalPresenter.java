@@ -2,8 +2,7 @@ package com.msf.metasploit.adapter;
 
 import android.os.Handler;
 
-import com.msf.metasploit.model.Console;
-import com.msf.metasploit.model.RpcServer;
+import com.msf.metasploit.model.Terminal;
 import com.msf.metasploit.rpc.Async;
 import com.msf.metasploit.rpc.RpcConnection;
 import com.msf.metasploit.rpc.RpcConstants;
@@ -13,7 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ConsolePresenter {
+public class TerminalPresenter {
 
     private static final long POLLING_INTERVAL = 8000;
 
@@ -45,6 +44,16 @@ public class ConsolePresenter {
         }
     }
 
+    public void setConsole(RpcConnection rpc, String consoleId) {
+        rpcConnection = rpc;
+        terminal = new Terminal();
+        terminal.id = consoleId;
+    }
+
+    public Terminal getTerminal() {
+        return terminal;
+    }
+
     public interface UpdateListener {
         void onUpdated();
     }
@@ -55,9 +64,8 @@ public class ConsolePresenter {
         }
     }
 
-    public Console console;
-    public RpcServer rpcServer;
-    public RpcConnection rpcConnection;
+    private Terminal terminal;
+    private RpcConnection rpcConnection;
     private StringBuilder commandList = new StringBuilder();
 
     public void sendCommand(String command) {
@@ -73,29 +81,29 @@ public class ConsolePresenter {
     }
 
     private void updateConsole() throws IOException {
-        if (console.id == null) {
+        if (terminal.id == null) {
             HashMap<String, String> consoleInfo = (HashMap<String, String>) rpcConnection.execute(RpcConstants.CONSOLE_CREATE);
-            console.id = consoleInfo.get("id");
+            terminal.id = consoleInfo.get("id");
         }
 
         if (commandList.length() > 0) {
             String command = commandList.toString();
             commandList.setLength(0);
-            rpcConnection.execute(RpcConstants.CONSOLE_WRITE, new Object[]{console.id, command});
-            console.text.append(console.prompt);
-            console.text.append(command);
+            rpcConnection.execute(RpcConstants.CONSOLE_WRITE, new Object[]{terminal.id, command});
+            terminal.text.append(terminal.prompt);
+            terminal.text.append(command);
         }
 
-        HashMap<String, Object> consoleObject = (HashMap<String, Object>) rpcConnection.execute(RpcConstants.CONSOLE_READ, new Object[]{console.id});
+        HashMap<String, Object> consoleObject = (HashMap<String, Object>) rpcConnection.execute(RpcConstants.CONSOLE_READ, new Object[]{terminal.id});
         String prompt = (String) consoleObject.get("prompt");
         if (prompt != null) {
             prompt = prompt.replaceAll("\\x01|\\x02", "");
-            console.prompt = prompt;
+            terminal.prompt = prompt;
         }
 
         String data = (String) consoleObject.get("data");
         if (data != null) {
-            console.text.append(data);
+            terminal.text.append(data);
         }
         updateListeners();
 

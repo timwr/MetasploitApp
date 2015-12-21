@@ -22,7 +22,7 @@ import com.msf.metasploit.Msf;
 import com.msf.metasploit.MsfServerList;
 import com.msf.metasploit.R;
 import com.msf.metasploit.adapter.ModelAdapter;
-import com.msf.metasploit.fragments.ConsoleFragment;
+import com.msf.metasploit.fragments.TerminalFragment;
 import com.msf.metasploit.model.RpcServer;
 
 public class MainActivity extends AppCompatActivity {
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void selectItem(int position) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment consoleFragment = ConsoleFragment.newInstance(null, rpcServer);
+        Fragment consoleFragment = TerminalFragment.newInstance(null, rpcServer);
         ft.replace(R.id.frame_container, consoleFragment).commit();
         setTitle("Console");
     }

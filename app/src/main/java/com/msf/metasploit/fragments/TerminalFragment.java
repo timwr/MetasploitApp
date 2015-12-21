@@ -14,21 +14,21 @@ import android.widget.TextView;
 import com.msf.metasploit.Msf;
 import com.msf.metasploit.MsfServerList;
 import com.msf.metasploit.R;
-import com.msf.metasploit.adapter.ConsolePresenter;
-import com.msf.metasploit.model.Console;
+import com.msf.metasploit.adapter.TerminalPresenter;
 import com.msf.metasploit.model.RpcServer;
+import com.msf.metasploit.model.Terminal;
 
-public class ConsoleFragment extends Fragment implements ConsolePresenter.UpdateListener {
+public class TerminalFragment extends Fragment implements TerminalPresenter.UpdateListener {
 
     private static final String ID = "id";
 
-    public static ConsoleFragment newInstance(String id, RpcServer rpcServer) {
-        ConsoleFragment consoleFragment = new ConsoleFragment();
+    public static TerminalFragment newInstance(String id, RpcServer rpcServer) {
+        TerminalFragment terminalFragment = new TerminalFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(MsfServerList.RPC_SERVER_ID, rpcServer.uid);
         bundle.putString(ID, id);
-        consoleFragment.setArguments(bundle);
-        return consoleFragment;
+        terminalFragment.setArguments(bundle);
+        return terminalFragment;
     }
 
     private ScrollView scrollviewConsole;
@@ -36,10 +36,7 @@ public class ConsoleFragment extends Fragment implements ConsolePresenter.Update
     private TextView textviewPrompt;
     private EditText edittextInput;
 
-    private String consoleId;
-    private RpcServer rpcServer;
-    private ConsolePresenter consolePresenter;
-
+    private TerminalPresenter terminalPresenter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,13 +61,11 @@ public class ConsoleFragment extends Fragment implements ConsolePresenter.Update
         });
 
         Bundle bundle = getArguments();
-        consoleId = bundle.getString(ID);
-        rpcServer = Msf.get().msfServerList.fromIntent(getActivity().getIntent());
+        String consoleId = bundle.getString(ID);
+        RpcServer rpcServer = Msf.get().msfServerList.fromIntent(getActivity().getIntent());
 
-        consolePresenter = new ConsolePresenter();
-        consolePresenter.rpcConnection = rpcServer.getRpc();
-        consolePresenter.console = new Console();
-        consolePresenter.console.id = consoleId;
+        terminalPresenter = new TerminalPresenter();
+        terminalPresenter.setConsole(rpcServer.getRpc(), consoleId);
 
         return view;
     }
@@ -78,12 +73,12 @@ public class ConsoleFragment extends Fragment implements ConsolePresenter.Update
     @Override
     public void onStart() {
         super.onStart();
-        consolePresenter.addListener(this);
+        terminalPresenter.addListener(this);
     }
 
     @Override
     public void onStop() {
-        consolePresenter.removeListener(this);
+        terminalPresenter.removeListener(this);
         super.onStop();
     }
 
@@ -94,7 +89,7 @@ public class ConsoleFragment extends Fragment implements ConsolePresenter.Update
     }
 
     private void updateView() {
-        updateView(consolePresenter.console);
+        updateView(terminalPresenter.getTerminal());
     }
 
     @Override
@@ -109,7 +104,7 @@ public class ConsoleFragment extends Fragment implements ConsolePresenter.Update
     }
 
     private void updateContent() {
-        consolePresenter.update();
+        terminalPresenter.update();
     }
 
     private void updateScroll() {
@@ -122,15 +117,15 @@ public class ConsoleFragment extends Fragment implements ConsolePresenter.Update
         });
     }
 
-    private void updateView(Console console) {
-        textviewPrompt.setText(console.prompt);
-        textviewConsole.setText(console.text);
+    private void updateView(Terminal terminal) {
+        textviewPrompt.setText(terminal.prompt);
+        textviewConsole.setText(terminal.text);
         updateScroll();
     }
 
     private void writeCommand(String command) {
-        consolePresenter.sendCommand(command);
-        consolePresenter.update();
+        terminalPresenter.sendCommand(command);
+        terminalPresenter.update();
     }
 
 }
