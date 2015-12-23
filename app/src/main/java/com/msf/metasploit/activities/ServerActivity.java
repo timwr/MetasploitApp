@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.msf.metasploit.BuildConfig;
 import com.msf.metasploit.Msf;
 import com.msf.metasploit.MsfServerList;
 import com.msf.metasploit.R;
@@ -42,6 +43,14 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
                 startServerDetailActivity(rpcServer);
             }
         });
+
+        if (BuildConfig.DEBUG) {
+//            RpcServer emulator = DefaultRpcServer.createDefaultRpcServer("10.0.2.2");
+            RpcServer autoConnect = DefaultRpcServer.createDefaultRpcServer();
+            msfServerList.getServerList().add(autoConnect);
+            msfServerList.connectAsync(autoConnect);
+            startServerDetailActivity(autoConnect);
+        }
     }
 
     private void updateView() {
@@ -51,13 +60,7 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
     @Override
     protected void onStart() {
         super.onStart();
-        if (true) {
-//            RpcServer emulator = DefaultRpcServer.createDefaultRpcServer("10.0.2.2");
-            RpcServer autoConnect = DefaultRpcServer.createDefaultRpcServer();
-            msfServerList.getServerList().add(autoConnect);
-            msfServerList.connectAsync(autoConnect);
-            startServerDetailActivity(autoConnect);
-        }
+
         msfServerList.addListener(this);
     }
 

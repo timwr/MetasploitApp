@@ -57,6 +57,7 @@ public class ServerDetailActivity extends Activity implements MsfServerList.Upda
             Intent intent = new Intent(this, MainActivity.class);
             MsfServerList.toIntent(intent, rpcServer);
             startActivity(intent);
+            finish();
         }
         runOnUiThread(new Runnable() {
             @Override
