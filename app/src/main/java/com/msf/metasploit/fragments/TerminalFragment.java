@@ -65,6 +65,7 @@ public class TerminalFragment extends Fragment implements TerminalPresenter.Upda
         int rpcServerId = bundle.getInt(MsfServerList.RPC_SERVER_ID);
         RpcServer rpcServer = Msf.get().msfServerList.getRpcServer(rpcServerId);
 
+        System.err.println("console ID " + consoleId);
         terminalPresenter = new TerminalPresenter();
         terminalPresenter.setConsole(rpcServer.getRpc(), consoleId);
 

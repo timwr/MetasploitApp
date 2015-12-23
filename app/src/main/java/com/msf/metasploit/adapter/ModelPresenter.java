@@ -28,12 +28,12 @@ public class ModelPresenter {
         listeners.add(listener);
     }
 
-//    private void refreshAfterInterval(long pollingInterval) {
-//        handler.removeCallbacksAndMessages(null);
-//        if (listeners.size() > 0) {
-//            handler.postDelayed(updateHandler, pollingInterval);
-//        }
-//    }
+    private void refreshAfterInterval(long pollingInterval) {
+        handler.removeCallbacksAndMessages(null);
+        if (listeners.size() > 0) {
+            handler.postDelayed(updateHandler, pollingInterval);
+        }
+    }
 
     public void removeListener(UpdateListener listener) {
         listeners.remove(listener);
@@ -62,6 +62,7 @@ public class ModelPresenter {
             e.printStackTrace();
         }
         updateListeners();
+        refreshAfterInterval(POLLING_INTERVAL);
     }
 
     public void update() {

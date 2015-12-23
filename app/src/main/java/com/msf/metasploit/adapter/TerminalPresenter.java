@@ -108,7 +108,7 @@ public class TerminalPresenter {
         updateListeners();
 
         Boolean busy = (Boolean) consoleObject.get("busy");
-        if (busy) {
+        if (busy != null && busy) {
             refreshAfterInterval(100);
         } else {
             refreshAfterInterval(POLLING_INTERVAL);

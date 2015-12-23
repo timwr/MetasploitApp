@@ -21,7 +21,10 @@ import com.msf.metasploit.R;
 import com.msf.metasploit.adapter.ModelAdapter;
 import com.msf.metasploit.adapter.ModelPresenter;
 import com.msf.metasploit.fragments.TerminalFragment;
+import com.msf.metasploit.model.Console;
 import com.msf.metasploit.model.RpcServer;
+
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity implements ModelPresenter.UpdateListener {
 
@@ -35,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements ModelPresenter.Up
     private MsfServerList msfServerList;
     private int rpcServerId;
     private RpcServer rpcServer;
+    private HashMap<Integer, Object> menuMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements ModelPresenter.Up
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        return false;
+                        return onMenuItemClick(position);
                     }
                 })
                 .withOnDrawerListener(new Drawer.OnDrawerListener() {
@@ -105,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements ModelPresenter.Up
         modelPresenter.setConnection(rpcServer.getRpc());
 
         if (savedInstanceState == null) {
-            selectItem(0);
+            selectItem(null);
         }
     }
 
@@ -119,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements ModelPresenter.Up
 
     private void updateView() {
         ModelAdapter.updateHeader(accountHeader, rpcServerId, msfServerList);
-        ModelAdapter.updateView(drawer, rpcServer);
+        menuMap = ModelAdapter.updateView(drawer, rpcServer);
     }
 
     @Override
@@ -144,9 +148,25 @@ public class MainActivity extends AppCompatActivity implements ModelPresenter.Up
         }
     }
 
-    private void selectItem(int position) {
+    private boolean onMenuItemClick(int position) {
+        if (position == ModelAdapter.ID_NEW_CONSOLE) {
+            selectItem(null);
+            return false;
+        }
+        if (menuMap == null) {
+            return false;
+        }
+        Object menuItem = menuMap.get(position);
+        if (menuItem instanceof Console) {
+            Console console = (Console) menuItem;
+            selectItem(console.id);
+        }
+        return false;
+    }
+
+    private void selectItem(String id) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment consoleFragment = TerminalFragment.newInstance(null, rpcServerId);
+        Fragment consoleFragment = TerminalFragment.newInstance(id, rpcServerId);
         ft.replace(R.id.frame_container, consoleFragment).commit();
         setTitle("Console");
     }

@@ -15,36 +15,46 @@ import com.msf.metasploit.R;
 import com.msf.metasploit.model.Console;
 import com.msf.metasploit.model.RpcServer;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ModelAdapter {
 
-    public static void updateView(Drawer drawer, RpcServer rpcServer) {
+    public static int ID_LOADING = 0;
+    public static int ID_NEW_CONSOLE = 1;
+
+    public static HashMap<Integer, Object> updateView(Drawer drawer, RpcServer rpcServer) {
         drawer.removeAllItems();
-        int identifier = 1;
+        HashMap<Integer,Object> itemMap = new HashMap<>();
         List<Console> consoles = rpcServer.getModel().getConsoles();
         if (consoles == null) {
             drawer.addItems(
-                    new PrimaryDrawerItem().withName("Loading...").withIcon(GoogleMaterial.Icon.gmd_refresh).withIdentifier(++identifier)
+                    new PrimaryDrawerItem().withName("Loading...").withIcon(GoogleMaterial.Icon.gmd_refresh).withIdentifier(ID_LOADING)
             );
-        } else {
-            String consoleString = "Console (" + consoles.size() + ")";
-            drawer.addItem(new PrimaryDrawerItem().withName(consoleString).withIcon(GoogleMaterial.Icon.gmd_format_playlist_add).withIdentifier(++identifier));
-            for (Console console : consoles) {
-                String consoleName = "Console: " + console.id;
-                drawer.addItem(new SecondaryDrawerItem().withName(consoleName).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_format_playlist_add).withIdentifier(++identifier));
-            }
+            return itemMap;
+        }
+
+        int identifier = ID_NEW_CONSOLE;
+        String consoleString = "Console (" + consoles.size() + ")";
+        drawer.addItem(new PrimaryDrawerItem().withName(consoleString).withIcon(GoogleMaterial.Icon.gmd_format_playlist_add).withIdentifier(identifier));
+        for (Console console : consoles) {
+            identifier++;
+            String consoleName = "Console: " + console.id;
+            itemMap.put(identifier, console);
+            drawer.addItem(new SecondaryDrawerItem().withName(consoleName).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_format_playlist_add).withIdentifier(identifier));
         }
 
         Map<String, Map> sessions = rpcServer.getModel().getSessions();
-        if (sessions != null) {
+        if (sessions != null && sessions.keySet().size() > 0) {
             drawer.addItem(new PrimaryDrawerItem().withName("Sessions").withIcon(GoogleMaterial.Icon.gmd_format_playlist_add).withIdentifier(++identifier));
             for (String id : sessions.keySet()) {
                 String consoleName = "Session: " + id;
+                itemMap.put(identifier, id);
                 drawer.addItem(new SecondaryDrawerItem().withName(consoleName).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_format_playlist_add).withIdentifier(++identifier));
             }
         }
+        return itemMap;
     }
 
     public static void updateHeader(AccountHeader accountHeader, int currentId, MsfServerList msfServerList) {
