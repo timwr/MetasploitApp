@@ -47,14 +47,14 @@ public class ModelAdapter {
         }
     }
 
-    public static void updateHeader(AccountHeader accountHeader, RpcServer rpcServer, MsfServerList msfServerList) {
+    public static void updateHeader(AccountHeader accountHeader, int currentId, MsfServerList msfServerList) {
         List<RpcServer> rpcServers = msfServerList.getServerList();
         IProfile active = null;
         IProfile[] profiles = new IProfile[rpcServers.size()];
         for (int i = 0; i < rpcServers.size(); i++) {
             RpcServer current = rpcServers.get(i);
-            final IProfile profile = new ProfileDrawerItem().withName(current.getRpcServerName()).withIdentifier(current.uid);
-            if (current.uid == rpcServer.uid) {
+            final IProfile profile = new ProfileDrawerItem().withName(current.getRpcServerName()).withIdentifier(i);
+            if (currentId == i) {
                 active = profile;
             }
             profiles[i] = profile;

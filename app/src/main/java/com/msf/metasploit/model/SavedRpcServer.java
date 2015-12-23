@@ -5,7 +5,6 @@ import android.net.Uri;
 
 public class SavedRpcServer {
 
-    public int uid;
     public String name;
     public boolean ssl;
     public String rpcHost;

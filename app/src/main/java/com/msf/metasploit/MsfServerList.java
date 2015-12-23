@@ -1,7 +1,5 @@
 package com.msf.metasploit;
 
-import android.content.Intent;
-
 import com.msf.metasploit.model.RpcServer;
 import com.msf.metasploit.rpc.Async;
 import com.msf.metasploit.rpc.RpcConnection;
@@ -14,6 +12,7 @@ import java.util.List;
 public class MsfServerList {
 
     public static final String RPC_SERVER_ID = "rpc_server_id";
+    public static final int RPC_SERVER_ID_NEW = -1;
 
     public List<RpcServer> serverList = new ArrayList<RpcServer>();
 
@@ -21,21 +20,8 @@ public class MsfServerList {
         return serverList;
     }
 
-    public RpcServer fromIntent(Intent intent) {
-        return getRpcServer(intent.getIntExtra(RPC_SERVER_ID, 0));
-    }
-
-    public static void toIntent(Intent intent, RpcServer rpcServer) {
-        intent.putExtra(RPC_SERVER_ID, rpcServer.uid);
-    }
-
     public RpcServer getRpcServer(int rpcServerId) {
-        for (RpcServer rpcServer : serverList) {
-            if (rpcServer.uid == rpcServerId) {
-                return rpcServer;
-            }
-        }
-        throw new RuntimeException();
+        return serverList.get(rpcServerId);
     }
 
     private List<UpdateListener> listeners = new LinkedList<>();

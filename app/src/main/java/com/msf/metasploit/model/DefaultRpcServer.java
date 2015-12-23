@@ -5,7 +5,6 @@ public class DefaultRpcServer  {
 
     public static RpcServer createDefaultRpcServer() {
         RpcServer rpcServer = new RpcServer();
-        rpcServer.uid = 1;
         rpcServer.rpcUser = Defaults.DEFAULT_USER;
         rpcServer.rpcHost = Defaults.DEFAULT_HOST;
         rpcServer.rpcPassword = Defaults.DEFAULT_PASSWORD;
@@ -15,7 +14,6 @@ public class DefaultRpcServer  {
 
     public static RpcServer createDefaultRpcServer(String host) {
         RpcServer rpcServer = new RpcServer();
-        rpcServer.uid = host.hashCode();
         rpcServer.rpcUser = Defaults.DEFAULT_USER;
         rpcServer.rpcHost = host;
         rpcServer.rpcPassword = Defaults.DEFAULT_PASSWORD;

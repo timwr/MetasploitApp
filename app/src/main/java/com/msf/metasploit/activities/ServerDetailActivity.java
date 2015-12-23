@@ -20,6 +20,7 @@ public class ServerDetailActivity extends Activity implements MsfServerList.Upda
     private EditText edittextPass;
 
     private MsfServerList msfServerList;
+    private int rpcServerId;
     private RpcServer rpcServer;
     private RpcServerView rpcServerView;
 
@@ -35,7 +36,12 @@ public class ServerDetailActivity extends Activity implements MsfServerList.Upda
         rpcServerView = (RpcServerView) findViewById(R.id.rpcserverview_server);
 
         msfServerList = Msf.get().msfServerList;
-        rpcServer = msfServerList.fromIntent(getIntent());
+        int rpcServerId = getIntent().getIntExtra(MsfServerList.RPC_SERVER_ID, -1);
+        if (rpcServerId == -1) {
+            rpcServer = new RpcServer();
+        } else {
+            rpcServer = msfServerList.getRpcServer(rpcServerId);
+        }
     }
 
     @Override
@@ -55,7 +61,7 @@ public class ServerDetailActivity extends Activity implements MsfServerList.Upda
     public void onUpdated() {
         if (rpcServer.status == RpcServer.STATUS_AUTHORISED) {
             Intent intent = new Intent(this, MainActivity.class);
-            MsfServerList.toIntent(intent, rpcServer);
+            intent.putExtra(MsfServerList.RPC_SERVER_ID, rpcServerId);
             startActivity(intent);
             finish();
         }

@@ -39,8 +39,15 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
         listviewServers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                RpcServer rpcServer = serverList.get(i);
-                startServerDetailActivity(rpcServer);
+                RpcServer rpcServer = msfServerList.getRpcServer(i);
+                if (rpcServer.status == RpcServer.STATUS_AUTHORISED) {
+                    Intent intent = new Intent(ServerActivity.this, MainActivity.class);
+                    intent.putExtra(MsfServerList.RPC_SERVER_ID, i);
+                    startActivity(intent);
+                    finish();
+                } else if (rpcServer.status != RpcServer.STATUS_CONNECTING) {
+                    msfServerList.connectAsync(rpcServer);
+                }
             }
         });
 
@@ -49,7 +56,7 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
             RpcServer autoConnect = DefaultRpcServer.createDefaultRpcServer();
             msfServerList.getServerList().add(autoConnect);
             msfServerList.connectAsync(autoConnect);
-            startServerDetailActivity(autoConnect);
+            startServerDetailActivity(0);
         }
     }
 
@@ -60,8 +67,8 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
     @Override
     protected void onStart() {
         super.onStart();
-
         msfServerList.addListener(this);
+        updateView();
     }
 
     @Override
@@ -81,14 +88,12 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
     }
 
     public void clickAddServer(View view) {
-        startServerDetailActivity(null);
+        startServerDetailActivity(-1);
     }
 
-    public void startServerDetailActivity(RpcServer rpcServer) {
+    public void startServerDetailActivity(int rpcServer) {
         Intent intent = new Intent(this, ServerDetailActivity.class);
-        if (rpcServer != null) {
-            MsfServerList.toIntent(intent, rpcServer);
-        }
+        intent.putExtra(MsfServerList.RPC_SERVER_ID, rpcServer);
         startActivity(intent);
     }
 }

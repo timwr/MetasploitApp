@@ -22,10 +22,10 @@ public class TerminalFragment extends Fragment implements TerminalPresenter.Upda
 
     private static final String ID = "id";
 
-    public static TerminalFragment newInstance(String id, RpcServer rpcServer) {
+    public static TerminalFragment newInstance(String id, int rpcServerId) {
         TerminalFragment terminalFragment = new TerminalFragment();
         Bundle bundle = new Bundle();
-        bundle.putInt(MsfServerList.RPC_SERVER_ID, rpcServer.uid);
+        bundle.putInt(MsfServerList.RPC_SERVER_ID, rpcServerId);
         bundle.putString(ID, id);
         terminalFragment.setArguments(bundle);
         return terminalFragment;
@@ -62,7 +62,8 @@ public class TerminalFragment extends Fragment implements TerminalPresenter.Upda
 
         Bundle bundle = getArguments();
         String consoleId = bundle.getString(ID);
-        RpcServer rpcServer = Msf.get().msfServerList.fromIntent(getActivity().getIntent());
+        int rpcServerId = bundle.getInt(MsfServerList.RPC_SERVER_ID);
+        RpcServer rpcServer = Msf.get().msfServerList.getRpcServer(rpcServerId);
 
         terminalPresenter = new TerminalPresenter();
         terminalPresenter.setConsole(rpcServer.getRpc(), consoleId);

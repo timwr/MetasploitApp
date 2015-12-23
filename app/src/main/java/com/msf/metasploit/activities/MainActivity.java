@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements ModelPresenter.Up
 
     private ModelPresenter modelPresenter;
     private MsfServerList msfServerList;
+    private int rpcServerId;
     private RpcServer rpcServer;
 
     @Override
@@ -92,7 +93,8 @@ public class MainActivity extends AppCompatActivity implements ModelPresenter.Up
         drawer.keyboardSupportEnabled(this, true);
 
         msfServerList = Msf.get().msfServerList;
-        rpcServer = msfServerList.fromIntent(getIntent());
+        rpcServerId = getIntent().getIntExtra(MsfServerList.RPC_SERVER_ID, 0);
+        rpcServer = msfServerList.getRpcServer(rpcServerId);
         modelPresenter = new ModelPresenter();
         modelPresenter.setConnection(rpcServer.getRpc());
 
@@ -110,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements ModelPresenter.Up
     }
 
     private void updateView() {
-        ModelAdapter.updateHeader(accountHeader, rpcServer, msfServerList);
+        ModelAdapter.updateHeader(accountHeader, rpcServerId, msfServerList);
         ModelAdapter.updateView(drawer, rpcServer);
     }
 
@@ -138,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements ModelPresenter.Up
 
     private void selectItem(int position) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment consoleFragment = TerminalFragment.newInstance(null, rpcServer);
+        Fragment consoleFragment = TerminalFragment.newInstance(null, rpcServerId);
         ft.replace(R.id.frame_container, consoleFragment).commit();
         setTitle("Console");
     }
