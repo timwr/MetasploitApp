@@ -2,14 +2,19 @@ package com.msf.metasploit.activities;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
+import com.mikepenz.materialize.util.KeyboardUtil;
 import com.msf.metasploit.Msf;
 import com.msf.metasploit.MsfServerList;
 import com.msf.metasploit.R;
@@ -43,18 +48,19 @@ public class MainActivity extends AppCompatActivity implements ModelPresenter.Up
         accountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withCompactStyle(true)
+                .withProfileImagesVisible(false)
                 .withHeaderBackground(R.drawable.side_nav_bar)
-//                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
-//                    @Override
-//                    public boolean onProfileChanged(View view, IProfile profile, boolean current) {
-//                        if (profile.getIdentifier() == ADD_NEW_SERVER) {
-//                            startActivity(new Intent(MainActivity.this, ServerActivity.class));
-//                        } else if (profile.getIdentifier() == MODIFY_SERVER) {
-//                            startActivity(new Intent(MainActivity.this, ServerActivity.class));
-//                        }
-//                        return false;
-//                    }
-//                })
+                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                    @Override
+                    public boolean onProfileChanged(View view, IProfile profile, boolean current) {
+                        if (profile.getIdentifier() == ADD_NEW_SERVER) {
+                            startActivity(new Intent(MainActivity.this, ServerActivity.class));
+                        } else if (profile.getIdentifier() == MODIFY_SERVER) {
+                            startActivity(new Intent(MainActivity.this, ServerActivity.class));
+                        }
+                        return false;
+                    }
+                })
                 .withSavedInstance(savedInstanceState)
                 .build();
 
@@ -63,28 +69,28 @@ public class MainActivity extends AppCompatActivity implements ModelPresenter.Up
                 .withActivity(this)
                 .withToolbar(toolbar)
                 .withAccountHeader(accountHeader)
-//                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-//                    @Override
-//                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-//                        return false;
-//                    }
-//                })
-//                .withOnDrawerListener(new Drawer.OnDrawerListener() {
-//                    @Override
-//                    public void onDrawerOpened(View drawerView) {
-//                        KeyboardUtil.hideKeyboard(MainActivity.this);
-//                    }
-//
-//                    @Override
-//                    public void onDrawerClosed(View drawerView) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onDrawerSlide(View drawerView, float slideOffset) {
-//
-//                    }
-//                })
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        return false;
+                    }
+                })
+                .withOnDrawerListener(new Drawer.OnDrawerListener() {
+                    @Override
+                    public void onDrawerOpened(View drawerView) {
+                        KeyboardUtil.hideKeyboard(MainActivity.this);
+                    }
+
+                    @Override
+                    public void onDrawerClosed(View drawerView) {
+
+                    }
+
+                    @Override
+                    public void onDrawerSlide(View drawerView, float slideOffset) {
+
+                    }
+                })
                 .withHasStableIds(false)
                 .withFireOnInitialOnClick(true)
                 .withSavedInstance(savedInstanceState)
@@ -106,9 +112,9 @@ public class MainActivity extends AppCompatActivity implements ModelPresenter.Up
     @Override
     protected void onStart() {
         super.onStart();
-        updateView();
-        modelPresenter.update();
         modelPresenter.addListener(this);
+        modelPresenter.update();
+        updateView();
     }
 
     private void updateView() {
