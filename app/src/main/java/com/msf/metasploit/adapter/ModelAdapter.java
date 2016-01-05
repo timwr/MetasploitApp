@@ -14,10 +14,10 @@ import com.msf.metasploit.MsfServerList;
 import com.msf.metasploit.R;
 import com.msf.metasploit.model.Console;
 import com.msf.metasploit.model.RpcServer;
+import com.msf.metasploit.model.Session;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ModelAdapter {
 
@@ -45,13 +45,14 @@ public class ModelAdapter {
             drawer.addItem(new SecondaryDrawerItem().withName(consoleName).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_format_playlist_add).withIdentifier(identifier));
         }
 
-        Map<String, Map> sessions = rpcServer.getModel().getSessions();
-        if (sessions != null && sessions.keySet().size() > 0) {
+        List<Session> sessions = rpcServer.getModel().getSessions();
+        if (sessions != null && sessions.size() > 0) {
             drawer.addItem(new PrimaryDrawerItem().withName("Sessions").withIcon(GoogleMaterial.Icon.gmd_format_playlist_add).withIdentifier(++identifier));
-            for (String id : sessions.keySet()) {
-                String consoleName = "Session: " + id;
-                itemMap.put(identifier, id);
-                drawer.addItem(new SecondaryDrawerItem().withName(consoleName).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_format_playlist_add).withIdentifier(++identifier));
+            for (Session session : sessions) {
+                identifier++;
+                String consoleName = session.description + ": " + session.id;
+                itemMap.put(identifier, session);
+                drawer.addItem(new SecondaryDrawerItem().withName(consoleName).withLevel(2).withIcon(GoogleMaterial.Icon.gmd_format_playlist_add).withIdentifier(identifier));
             }
         }
         return itemMap;

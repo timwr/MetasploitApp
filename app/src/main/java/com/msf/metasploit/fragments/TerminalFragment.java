@@ -21,12 +21,14 @@ import com.msf.metasploit.model.Terminal;
 public class TerminalFragment extends Fragment implements TerminalPresenter.UpdateListener {
 
     private static final String ID = "id";
+    private static final String TYPE = "type";
 
-    public static TerminalFragment newInstance(String id, int rpcServerId) {
+    public static TerminalFragment newInstance(int rpcServerId, String id, int type) {
         TerminalFragment terminalFragment = new TerminalFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(MsfServerList.RPC_SERVER_ID, rpcServerId);
         bundle.putString(ID, id);
+        bundle.putInt(TYPE, type);
         terminalFragment.setArguments(bundle);
         return terminalFragment;
     }
@@ -61,14 +63,14 @@ public class TerminalFragment extends Fragment implements TerminalPresenter.Upda
         });
 
         Bundle bundle = getArguments();
-        String consoleId = bundle.getString(ID);
+        String id = bundle.getString(ID);
+        int type = bundle.getInt(TYPE);
         int rpcServerId = bundle.getInt(MsfServerList.RPC_SERVER_ID);
         RpcServer rpcServer = Msf.get().msfServerList.getRpcServer(rpcServerId);
 
-        System.err.println("console ID " + consoleId);
+        System.err.println("console ID " + id);
         terminalPresenter = new TerminalPresenter();
-        terminalPresenter.setConsole(rpcServer.getRpc(), consoleId);
-
+        terminalPresenter.setTerminal(rpcServer.getRpc(), id, type);
         return view;
     }
 

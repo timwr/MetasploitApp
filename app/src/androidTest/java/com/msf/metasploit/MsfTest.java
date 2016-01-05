@@ -10,13 +10,13 @@ import java.io.IOException;
 
 public class MsfTest extends AndroidTestCase {
 
-    private RpcServer rpcServer;
+    protected RpcServer rpcServer;
 
-    public void testLogin() throws IOException {
+    protected void testLogin() throws IOException {
         Msf msf = new Msf();
         RpcServer rpcServer = DefaultRpcServer.createDefaultRpcServer();
         msf.msfServerList.serverList.add(rpcServer);
-        assertTrue(rpcServer.status == 0);
+        assertTrue(rpcServer.status == RpcServer.STATUS_NEW);
         msf.msfServerList.connectServer(rpcServer);
         assertTrue(rpcServer.status == RpcServer.STATUS_AUTHORISED);
         this.rpcServer = rpcServer;

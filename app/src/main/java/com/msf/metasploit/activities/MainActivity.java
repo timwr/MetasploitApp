@@ -23,6 +23,8 @@ import com.msf.metasploit.adapter.ModelPresenter;
 import com.msf.metasploit.fragments.TerminalFragment;
 import com.msf.metasploit.model.Console;
 import com.msf.metasploit.model.RpcServer;
+import com.msf.metasploit.model.Session;
+import com.msf.metasploit.model.Terminal;
 
 import java.util.HashMap;
 
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements ModelPresenter.Up
         modelPresenter.setConnection(rpcServer.getRpc());
 
         if (savedInstanceState == null) {
-            selectItem(null);
+            selectFragment(null, Terminal.TYPE_CONSOLE);
         }
     }
 
@@ -150,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements ModelPresenter.Up
 
     private boolean onMenuItemClick(int position) {
         if (position == ModelAdapter.ID_NEW_CONSOLE) {
-            selectItem(null);
+            selectFragment(null, Terminal.TYPE_CONSOLE);
             return false;
         }
         if (menuMap == null) {
@@ -159,14 +161,18 @@ public class MainActivity extends AppCompatActivity implements ModelPresenter.Up
         Object menuItem = menuMap.get(position);
         if (menuItem instanceof Console) {
             Console console = (Console) menuItem;
-            selectItem(console.id);
+            selectFragment(console.id, Terminal.TYPE_CONSOLE);
+        }
+        else if (menuItem instanceof Session) {
+            Session session = (Session) menuItem;
+            selectFragment(session.id, session.type);
         }
         return false;
     }
 
-    private void selectItem(String id) {
+    private void selectFragment(String id, int type) {
+        Fragment consoleFragment = TerminalFragment.newInstance(rpcServerId, id, type);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment consoleFragment = TerminalFragment.newInstance(id, rpcServerId);
         ft.replace(R.id.frame_container, consoleFragment).commit();
         setTitle("Console");
     }

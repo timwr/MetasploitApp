@@ -67,6 +67,7 @@ public class MsfModel implements RpcConstants {
             ModuleOption.addModuleOptions(module, object);
         } else if (cmd.equals(SESSION_LIST)) {
             sessionMap = (Map<String, Map>) object;
+            sessions = Session.getList(object);
         } else if (cmd.equals(RpcConstants.JOB_LIST)) {
             jobmap = (Map) object;
         } else if (cmd.equals(RpcConstants.JOB_INFO)) {
@@ -82,7 +83,7 @@ public class MsfModel implements RpcConstants {
         return consoles;
     }
 
-    public Map<String,Map> getSessions() {
-        return sessionMap;
+    public List<Session> getSessions() {
+        return sessions;
     }
 }

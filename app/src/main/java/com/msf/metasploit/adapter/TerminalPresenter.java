@@ -44,10 +44,11 @@ public class TerminalPresenter {
         }
     }
 
-    public void setConsole(RpcConnection rpc, String consoleId) {
+    public void setTerminal(RpcConnection rpc, String id, int type) {
         rpcConnection = rpc;
         terminal = new Terminal();
-        terminal.id = consoleId;
+        terminal.id = id;
+        terminal.type = type;
     }
 
     public Terminal getTerminal() {
@@ -80,25 +81,43 @@ public class TerminalPresenter {
         }
     }
 
-    private void updateConsole() throws IOException {
+    public void updateConsole() throws IOException {
         if (terminal.id == null) {
             HashMap<String, String> consoleInfo = (HashMap<String, String>) rpcConnection.execute(RpcConstants.CONSOLE_CREATE);
             terminal.id = consoleInfo.get("id");
         }
 
+        String writeCommand = null;
         if (commandList.length() > 0) {
+            if (terminal.type == Terminal.TYPE_CONSOLE) {
+                writeCommand = RpcConstants.CONSOLE_WRITE;
+            } else if (terminal.type == Terminal.TYPE_SHELL) {
+                writeCommand = RpcConstants.SESSION_SHELL_WRITE;
+            } else {
+                writeCommand =  RpcConstants.SESSION_METERPRETER_WRITE;
+            }
             String command = commandList.toString();
             commandList.setLength(0);
-            rpcConnection.execute(RpcConstants.CONSOLE_WRITE, new Object[]{terminal.id, command});
+            Object result = rpcConnection.execute(writeCommand, new Object[]{terminal.id, command});
             terminal.text.append(terminal.prompt);
             terminal.text.append(command);
         }
 
-        HashMap<String, Object> consoleObject = (HashMap<String, Object>) rpcConnection.execute(RpcConstants.CONSOLE_READ, new Object[]{terminal.id});
+        String readCommand = null;
+        if (terminal.type == Terminal.TYPE_CONSOLE) {
+            readCommand = RpcConstants.CONSOLE_READ;
+        } else if (terminal.type == Terminal.TYPE_SHELL) {
+            readCommand = RpcConstants.SESSION_SHELL_READ;
+        } else {
+            readCommand =  RpcConstants.SESSION_METERPRETER_READ;
+        }
+        HashMap<String, Object> consoleObject = (HashMap<String, Object>) rpcConnection.execute(readCommand, new Object[]{terminal.id});
         String prompt = (String) consoleObject.get("prompt");
         if (prompt != null) {
             prompt = prompt.replaceAll("\\x01|\\x02", "");
             terminal.prompt = prompt;
+        } else if (terminal.type != Terminal.TYPE_CONSOLE) {
+            terminal.prompt = "> ";
         }
 
         String data = (String) consoleObject.get("data");
@@ -111,7 +130,11 @@ public class TerminalPresenter {
         if (busy != null && busy) {
             refreshAfterInterval(100);
         } else {
-            refreshAfterInterval(POLLING_INTERVAL);
+            if (writeCommand != null) {
+                refreshAfterInterval(100);
+            } else {
+                refreshAfterInterval(POLLING_INTERVAL);
+            }
         }
     }
 
