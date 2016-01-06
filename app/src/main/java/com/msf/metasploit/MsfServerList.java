@@ -3,8 +3,8 @@ package com.msf.metasploit;
 import com.msf.metasploit.model.RpcServer;
 import com.msf.metasploit.rpc.Async;
 import com.msf.metasploit.rpc.RpcConnection;
+import com.msf.metasploit.rpc.RpcException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,7 +62,7 @@ public class MsfServerList {
                 rpcServer.status = RpcServer.STATUS_AUTHORISED;
                 updateListeners();
             }
-        } catch (IOException e) {
+        } catch (RpcException e) {
             rpcServer.status = RpcServer.STATUS_CONNECTION_FAILED;
             updateListeners();
         }

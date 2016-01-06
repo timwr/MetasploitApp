@@ -38,7 +38,7 @@ import javax.net.ssl.X509TrustManager;
 
 public class MsfRpc {
 
-	private URL u;
+    private URL u;
 
     private URLConnection huc; // new for each call
     private String rpcToken;
@@ -77,7 +77,7 @@ public class MsfRpc {
         }
 	}
 
-    public String connect(String username, String password) {
+    public String connect(String username, String password) throws RpcException {
 		/* login to msf server */
 		Object[] params = new Object[]{ username, password };
 		Map results = exec(RpcConstants.AUTH_LOGIN, params);
@@ -92,11 +92,11 @@ public class MsfRpc {
         return rpcToken;
     }
 
-    public Map execute(String methodName) throws IOException {
+    public Map execute(String methodName) throws RpcException {
         return execute(methodName, new Object[]{});
     }
 
-    public Map execute(String methodName, Object[] params) throws IOException {
+    public Map execute(String methodName, Object[] params) throws RpcException {
         Object[] paramsNew = new Object[params.length + 1];
         paramsNew[0] = rpcToken;
         System.arraycopy(params, 0, paramsNew, 1, params.length);
@@ -104,7 +104,7 @@ public class MsfRpc {
     }
 
     /** Method that sends a call to the server and received a response; only allows one at a time */
-    private Map exec(String methname, Object[] params) {
+    private Map exec(String methname, Object[] params) throws RpcException {
 
         if (BuildConfig.DEBUG) {
             StringBuilder stringBuilder = new StringBuilder();
@@ -134,11 +134,9 @@ public class MsfRpc {
                 return temp;
             }
         }
-        catch (RuntimeException rex) {
-			throw rex;
-		}
 		catch (Exception ex) {
-			throw new RuntimeException(ex);
+            ex.printStackTrace();
+            throw new RpcException(ex.getMessage());
 		}
 	}
 

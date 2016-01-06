@@ -6,8 +6,8 @@ import com.msf.metasploit.model.Terminal;
 import com.msf.metasploit.rpc.Async;
 import com.msf.metasploit.rpc.RpcConnection;
 import com.msf.metasploit.rpc.RpcConstants;
+import com.msf.metasploit.rpc.RpcException;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -76,12 +76,12 @@ public class TerminalPresenter {
     private void updateSync() {
         try {
             updateConsole();
-        } catch (IOException e) {
+        } catch (RpcException e) {
             e.printStackTrace();
         }
     }
 
-    public void updateConsole() throws IOException {
+    public void updateConsole() throws RpcException {
         if (terminal.id == null) {
             HashMap<String, String> consoleInfo = (HashMap<String, String>) rpcConnection.execute(RpcConstants.CONSOLE_CREATE);
             terminal.id = consoleInfo.get("id");

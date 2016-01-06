@@ -4,8 +4,8 @@ import android.os.Handler;
 
 import com.msf.metasploit.rpc.Async;
 import com.msf.metasploit.rpc.RpcConnection;
+import com.msf.metasploit.rpc.RpcException;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -58,7 +58,7 @@ public class ModelPresenter {
     private void updateSync() {
         try {
             rpcConnection.updateModel();
-        } catch (IOException e) {
+        } catch (RpcException e) {
             e.printStackTrace();
         }
         updateListeners();
