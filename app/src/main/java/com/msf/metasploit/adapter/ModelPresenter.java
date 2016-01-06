@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ModelPresenter {
 
-    private static final long POLLING_INTERVAL = 30000;
+    private static final long POLLING_INTERVAL = 15000;
 
     private Handler handler = new Handler();
     private Runnable updateHandler = new Runnable() {
