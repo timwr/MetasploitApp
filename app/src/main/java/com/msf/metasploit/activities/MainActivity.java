@@ -30,9 +30,6 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity implements ModelPresenter.UpdateListener {
 
-    private static final int ADD_NEW_SERVER = 1;
-    private static final int MODIFY_SERVER = 2;
-
     private Drawer drawer;
     private AccountHeader accountHeader;
 
@@ -55,13 +52,14 @@ public class MainActivity extends AppCompatActivity implements ModelPresenter.Up
                 .withActivity(this)
                 .withCompactStyle(true)
                 .withProfileImagesVisible(false)
+                .withCurrentProfileHiddenInList(true)
                 .withHeaderBackground(R.drawable.side_nav_bar)
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
                     public boolean onProfileChanged(View view, IProfile profile, boolean current) {
-                        if (profile.getIdentifier() == ADD_NEW_SERVER) {
+                        if (profile.getIdentifier() == ModelAdapter.ID_ADD_NEW_SERVER) {
                             startActivity(new Intent(MainActivity.this, ServerActivity.class));
-                        } else if (profile.getIdentifier() == MODIFY_SERVER) {
+                        } else if (profile.getIdentifier() == ModelAdapter.ID_MODIFY_SERVER) {
                             startActivity(new Intent(MainActivity.this, ServerActivity.class));
                         }
                         return false;

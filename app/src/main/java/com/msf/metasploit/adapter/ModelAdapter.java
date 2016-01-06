@@ -21,6 +21,9 @@ import java.util.List;
 
 public class ModelAdapter {
 
+    public static final int ID_ADD_NEW_SERVER = 1;
+    public static final int ID_MODIFY_SERVER = 2;
+
     public static int ID_LOADING = 0;
     public static int ID_NEW_CONSOLE = 1;
 
@@ -61,23 +64,22 @@ public class ModelAdapter {
     public static void updateHeader(AccountHeader accountHeader, int currentId, MsfServerList msfServerList) {
         List<RpcServer> rpcServers = msfServerList.getServerList();
         IProfile active = null;
-        IProfile[] profiles = new IProfile[rpcServers.size()];
         for (int i = 0; i < rpcServers.size(); i++) {
             RpcServer current = rpcServers.get(i);
-            final IProfile profile = new ProfileDrawerItem().withName(current.getRpcServerName()).withIdentifier(i);
+            String status = MsfApplication.getApplication().getString(current.getStatusString());
+            final IProfile profile = new ProfileDrawerItem().withEmail(status).withName(current.getRpcServerName()).withIdentifier(i);
             if (currentId == i) {
                 active = profile;
             }
-            profiles[i] = profile;
         }
         accountHeader.clear();
-        accountHeader.addProfiles(profiles);
         if (active != null) {
             accountHeader.setActiveProfile(active);
+            accountHeader.addProfiles(active);
         }
         accountHeader.addProfiles(
-                new ProfileSettingDrawerItem().withName("Add RPC Server").withDescription("Add new RPC server").withIcon(new IconicsDrawable(MsfApplication.getApplication(), GoogleMaterial.Icon.gmd_plus).actionBar().paddingDp(5).colorRes(R.color.material_drawer_primary_text)).withIdentifier(0),
-                new ProfileSettingDrawerItem().withName("Manage RPC Servers").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(2)
+                new ProfileSettingDrawerItem().withName("Add RPC Server").withDescription("Add new RPC server").withIcon(new IconicsDrawable(MsfApplication.getApplication(), GoogleMaterial.Icon.gmd_plus).actionBar().paddingDp(5).colorRes(R.color.material_drawer_primary_text)).withIdentifier(ID_ADD_NEW_SERVER),
+                new ProfileSettingDrawerItem().withName("Manage RPC Servers").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(ID_MODIFY_SERVER)
         );
     }
 

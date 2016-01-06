@@ -1,6 +1,7 @@
 
 package com.msf.metasploit.model;
 
+import com.msf.metasploit.R;
 import com.msf.metasploit.rpc.RpcConnection;
 
 public class RpcServer extends SavedRpcServer {
@@ -15,8 +16,18 @@ public class RpcServer extends SavedRpcServer {
     public String rpcPassword;
     public RpcConnection rpcConnection;
 
-    public int getStatus() {
-        return status;
+    public int getStatusString() {
+        if (status == RpcServer.STATUS_NEW) {
+            return R.string.rpc_status_new;
+        } else if (status == RpcServer.STATUS_CONNECTING) {
+            return R.string.rpc_status_connecting;
+        } else if (status == RpcServer.STATUS_AUTHORISED) {
+            return R.string.rpc_status_connected;
+        } else if (status == RpcServer.STATUS_CONNECTION_FAILED) {
+            return R.string.rpc_status_connection_failed;
+        } else {
+            return R.string.rpc_status_connection_failed;
+        }
     }
 
     public RpcConnection getRpc() {

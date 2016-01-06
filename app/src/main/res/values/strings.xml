@@ -4,4 +4,8 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_disconnect">Disconnect</string>
+    <string name="rpc_status_new"> </string>
+    <string name="rpc_status_connecting">Connecting…</string>
+    <string name="rpc_status_connected">Connected</string>
+    <string name="rpc_status_connection_failed">Connection failed</string>
 </resources>
