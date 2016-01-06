@@ -111,13 +111,14 @@ public class TerminalPresenter {
         } else {
             readCommand =  RpcConstants.SESSION_METERPRETER_READ;
         }
-        HashMap<String, Object> consoleObject = (HashMap<String, Object>) rpcConnection.execute(readCommand, new Object[]{terminal.id});
+        HashMap<String, Object> consoleObject = (HashMap<String, Object>) rpcConnection.execute(readCommand, new Object[]{ terminal.id });
         String prompt = (String) consoleObject.get("prompt");
         if (prompt != null) {
             prompt = prompt.replaceAll("\\x01|\\x02", "");
             terminal.prompt = prompt;
-        } else if (terminal.type != Terminal.TYPE_CONSOLE) {
-            terminal.prompt = "> ";
+        }
+        if (terminal.prompt == null) {
+            terminal.prompt = "";
         }
 
         String data = (String) consoleObject.get("data");
