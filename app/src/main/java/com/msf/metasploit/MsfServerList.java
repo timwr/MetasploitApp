@@ -49,6 +49,10 @@ public class MsfServerList {
 
     }
 
+    public void saveServerList() {
+
+    }
+
     public void connectServer(RpcServer rpcServer) {
         rpcServer.status = RpcServer.STATUS_CONNECTING;
         updateListeners();

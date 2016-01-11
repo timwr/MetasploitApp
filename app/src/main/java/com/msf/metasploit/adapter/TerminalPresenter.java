@@ -79,6 +79,7 @@ public class TerminalPresenter {
         } catch (RpcException e) {
             e.printStackTrace();
         }
+        updateListeners();
     }
 
     public void updateConsole() throws RpcException {
@@ -125,7 +126,6 @@ public class TerminalPresenter {
         if (data != null) {
             terminal.text.append(data);
         }
-        updateListeners();
 
         Boolean busy = (Boolean) consoleObject.get("busy");
         if (busy != null && busy) {

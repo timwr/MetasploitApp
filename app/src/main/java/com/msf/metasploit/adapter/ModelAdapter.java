@@ -27,7 +27,7 @@ public class ModelAdapter {
     public static int ID_LOADING = 0;
     public static int ID_NEW_CONSOLE = 1;
 
-    public static HashMap<Integer, Object> updateView(Drawer drawer, RpcServer rpcServer) {
+    public HashMap<Integer, Object> updateView(Drawer drawer, RpcServer rpcServer) {
         drawer.removeAllItems();
         HashMap<Integer,Object> itemMap = new HashMap<>();
         List<Console> consoles = rpcServer.getModel().getConsoles();
@@ -39,7 +39,7 @@ public class ModelAdapter {
         }
 
         int identifier = ID_NEW_CONSOLE;
-        String consoleString = "Console (" + consoles.size() + ")";
+        String consoleString = "New Console";
         drawer.addItem(new PrimaryDrawerItem().withName(consoleString).withIcon(GoogleMaterial.Icon.gmd_format_playlist_add).withIdentifier(identifier));
         for (Console console : consoles) {
             identifier++;
@@ -61,7 +61,7 @@ public class ModelAdapter {
         return itemMap;
     }
 
-    public static void updateHeader(AccountHeader accountHeader, int currentId, MsfServerList msfServerList) {
+    public void updateHeader(AccountHeader accountHeader, int currentId, MsfServerList msfServerList) {
         List<RpcServer> rpcServers = msfServerList.getServerList();
         IProfile active = null;
         for (int i = 0; i < rpcServers.size(); i++) {

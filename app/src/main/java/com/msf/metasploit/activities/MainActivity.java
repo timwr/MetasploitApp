@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements ModelPresenter.Up
     private AccountHeader accountHeader;
 
     private ModelPresenter modelPresenter;
+    private ModelAdapter modelAdapter;
     private MsfServerList msfServerList;
     private int rpcServerId;
     private RpcServer rpcServer;
@@ -105,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements ModelPresenter.Up
         msfServerList = Msf.get().msfServerList;
         rpcServerId = getIntent().getIntExtra(MsfServerList.RPC_SERVER_ID, 0);
         rpcServer = msfServerList.getRpcServer(rpcServerId);
+        modelAdapter = new ModelAdapter();
         modelPresenter = new ModelPresenter();
         modelPresenter.setConnection(rpcServer.getRpc());
 
@@ -122,8 +124,8 @@ public class MainActivity extends AppCompatActivity implements ModelPresenter.Up
     }
 
     private void updateView() {
-        ModelAdapter.updateHeader(accountHeader, rpcServerId, msfServerList);
-        menuMap = ModelAdapter.updateView(drawer, rpcServer);
+        modelAdapter.updateHeader(accountHeader, rpcServerId, msfServerList);
+        menuMap = modelAdapter.updateView(drawer, rpcServer);
     }
 
     @Override

@@ -115,6 +115,13 @@
             android:layout_gravity="right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="update"
+            android:text="Update" />
+
+        <Button
+            android:layout_gravity="right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:onClick="connect"
             android:text="Connect" />
     </LinearLayout>

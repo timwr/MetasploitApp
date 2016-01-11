@@ -88,7 +88,7 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
     }
 
     public void clickAddServer(View view) {
-        startServerDetailActivity(-1);
+        startServerDetailActivity(MsfServerList.RPC_SERVER_ID_NEW);
     }
 
     public void startServerDetailActivity(int rpcServer) {

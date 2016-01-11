@@ -37,7 +37,7 @@ public class ServerDetailActivity extends Activity implements MsfServerList.Upda
 
         msfServerList = Msf.get().msfServerList;
         int rpcServerId = getIntent().getIntExtra(MsfServerList.RPC_SERVER_ID, -1);
-        if (rpcServerId == -1) {
+        if (rpcServerId == MsfServerList.RPC_SERVER_ID_NEW) {
             rpcServer = new RpcServer();
         } else {
             rpcServer = msfServerList.getRpcServer(rpcServerId);
@@ -108,6 +108,10 @@ public class ServerDetailActivity extends Activity implements MsfServerList.Upda
 
     public void connect(View view) {
         Msf.get().msfServerList.connectAsync(rpcServer);
+    }
+
+    public void update(View view) {
+        Msf.get().msfServerList.saveServerList();
     }
 
 }
