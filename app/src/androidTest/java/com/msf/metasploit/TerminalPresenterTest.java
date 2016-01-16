@@ -4,31 +4,19 @@ package com.msf.metasploit;
 import android.test.AndroidTestCase;
 
 import com.msf.metasploit.adapter.TerminalPresenter;
-import com.msf.metasploit.model.DefaultRpcServer;
 import com.msf.metasploit.model.RpcServer;
 import com.msf.metasploit.model.Session;
 import com.msf.metasploit.model.Terminal;
 
-import java.io.IOException;
 import java.util.List;
 
 public class TerminalPresenterTest extends AndroidTestCase {
 
     private RpcServer rpcServer;
 
-    public void testLogin() throws IOException {
-        Msf msf = new Msf();
-        RpcServer rpcServer = DefaultRpcServer.createDefaultRpcServer();
-        msf.msfServerList.serverList.add(rpcServer);
-        assertTrue(rpcServer.status == 0);
-        msf.msfServerList.connectServer(rpcServer);
-        assertTrue(rpcServer.status == RpcServer.STATUS_AUTHORISED);
-        this.rpcServer = rpcServer;
-    }
-
-    public void testCreateConsole() throws IOException {
+    public void testCreateConsole() throws Exception {
         if (rpcServer == null) {
-            testLogin();
+            rpcServer = MsfTest.testLogin();
         }
 
         rpcServer.getRpc().updateModel();
@@ -42,10 +30,11 @@ public class TerminalPresenterTest extends AndroidTestCase {
 //        assertTrue(rpcServer.getModel().getSessions().size() > 0);
     }
 
-    public void testSession() throws IOException {
+    public void testSession() throws Exception {
         if (rpcServer == null) {
-            testLogin();
+            rpcServer = MsfTest.testLogin();
         }
+
         rpcServer.getRpc().updateModel();
         TerminalPresenter terminalPresenter = new TerminalPresenter();
         List<Session> sessions = rpcServer.getModel().getSessions();

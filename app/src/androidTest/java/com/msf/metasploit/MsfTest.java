@@ -6,25 +6,23 @@ import android.test.AndroidTestCase;
 import com.msf.metasploit.model.DefaultRpcServer;
 import com.msf.metasploit.model.RpcServer;
 
-import java.io.IOException;
-
 public class MsfTest extends AndroidTestCase {
 
     protected RpcServer rpcServer;
 
-    protected void testLogin() throws IOException {
+    public static RpcServer testLogin() throws Exception {
         Msf msf = new Msf();
         RpcServer rpcServer = DefaultRpcServer.createDefaultRpcServer();
         msf.msfServerList.serverList.add(rpcServer);
         assertTrue(rpcServer.status == RpcServer.STATUS_NEW);
         msf.msfServerList.connectServer(rpcServer);
-        assertTrue(rpcServer.status == RpcServer.STATUS_AUTHORISED);
-        this.rpcServer = rpcServer;
+        assertTrue(rpcServer.status == RpcServer.STATUS_CONNECTED);
+        return rpcServer;
     }
 
-    public void testLoginAndGenerateModels() throws IOException {
+    public void testLoginAndGenerateModels() throws Exception {
         if (rpcServer == null) {
-            testLogin();
+            rpcServer = testLogin();
         }
 
         rpcServer.getRpc().updateModel();
