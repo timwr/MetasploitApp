@@ -14,7 +14,11 @@ public class RpcConnection implements RpcConstants {
     public void connect(RpcServer rpcServer) throws RpcException {
         msfRpc = new MsfRpc();
         msfRpc.createURL(rpcServer.rpcHost, rpcServer.rpcPort, true);
-        rpcServer.rpcToken = msfRpc.connect(rpcServer.rpcUser, rpcServer.rpcPassword);
+        if (rpcServer.rpcToken != null) {
+            msfRpc.checkToken(rpcServer.rpcToken);
+        } else {
+            rpcServer.rpcToken = msfRpc.connect(rpcServer.rpcUser, rpcServer.rpcPassword);
+        }
     }
 
     public void updateModel() throws RpcException {

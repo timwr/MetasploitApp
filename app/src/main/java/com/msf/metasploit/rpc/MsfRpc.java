@@ -38,6 +38,7 @@ import javax.net.ssl.X509TrustManager;
 
 public class MsfRpc {
 
+    private static int TIMEOUT = 5000;
     private URL u;
 
     private URLConnection huc; // new for each call
@@ -76,6 +77,11 @@ public class MsfRpc {
             e.printStackTrace();
         }
 	}
+
+    public void checkToken(String rpcToken) throws RpcException {
+        this.rpcToken = rpcToken;
+        Map result = execute(RpcConstants.CORE_VERSION);
+    }
 
     public String connect(String username, String password) throws RpcException {
 		/* login to msf server */
@@ -145,7 +151,7 @@ public class MsfRpc {
 	 * @param src MessagePack response
 	 * @return decoded object
 	 */
-	private static Object unMsg(Object src){
+	private static Object unMsg(Object src) throws LoginException {
 		Object out = src;
 		if (src instanceof ArrayValue) {
 			List l = ((ArrayValue)src).list();
@@ -180,7 +186,12 @@ public class MsfRpc {
 
 			if (((Map)out).containsKey("error") && ((Map)out).containsKey("error_class")) {
 				System.out.println(((Map)out).get("error_backtrace"));
-				throw new RuntimeException(((Map)out).get("error_message").toString());
+                String result = ((Map)out).get("error_message").toString();
+                if (LoginException.LOGIN_FAILED.equals(result)) {
+                    throw new LoginException();
+                } else {
+                    throw new RuntimeException(result);
+                }
 			}
 		}
 		else if (src instanceof NilValue) {
@@ -229,7 +240,8 @@ public class MsfRpc {
 		huc.setDoInput(true);
 		huc.setUseCaches(false);
 		huc.setRequestProperty("Content-Type", "binary/message-pack");
-		huc.setReadTimeout(0);
+		huc.setReadTimeout(TIMEOUT);
+        huc.setConnectTimeout(TIMEOUT);
 		OutputStream os = huc.getOutputStream();
         MessagePacker pk = MessagePack.newDefaultPacker(os);
         pk.packArrayHeader(args.length + 1);
@@ -248,4 +260,5 @@ public class MsfRpc {
 		MessageUnpacker mpo = MessagePack.newDefaultUnpacker(is);
 		return unMsg(mpo.unpackValue());
 	}
+
 }

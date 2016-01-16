@@ -7,12 +7,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.msf.metasploit.BuildConfig;
 import com.msf.metasploit.Msf;
 import com.msf.metasploit.MsfServerList;
 import com.msf.metasploit.R;
 import com.msf.metasploit.adapter.ServerListAdapter;
-import com.msf.metasploit.model.DefaultRpcServer;
 import com.msf.metasploit.model.RpcServer;
 
 import java.util.List;
@@ -22,6 +20,7 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
     private ListView listviewServers;
     private ServerListAdapter listAdapter;
 
+    private boolean firstLaunch = true;
     private MsfServerList msfServerList;
 
     @Override
@@ -40,23 +39,23 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 RpcServer rpcServer = msfServerList.getRpcServer(i);
-                if (rpcServer.status == RpcServer.STATUS_AUTHORISED) {
+                if (rpcServer.status == RpcServer.STATUS_CONNECTED && rpcServer.rpcConnection != null) {
                     Intent intent = new Intent(ServerActivity.this, MainActivity.class);
                     intent.putExtra(MsfServerList.RPC_SERVER_ID, i);
                     startActivity(intent);
                     finish();
                 } else if (rpcServer.status != RpcServer.STATUS_CONNECTING) {
-                    msfServerList.connectAsync(rpcServer);
+                    if (rpcServer.rpcPassword != null || rpcServer.rpcToken != null) {
+                        msfServerList.connectAsync(rpcServer);
+                    } else {
+                        startServerDetailActivity(i);
+                    }
                 }
             }
         });
 
-        if (BuildConfig.DEBUG) {
-//            RpcServer emulator = DefaultRpcServer.createDefaultRpcServer("10.0.2.2");
-            RpcServer autoConnect = DefaultRpcServer.createDefaultRpcServer();
-            msfServerList.getServerList().add(autoConnect);
-            msfServerList.connectAsync(autoConnect);
-            startServerDetailActivity(0);
+        if (savedInstanceState != null) {
+            firstLaunch = false;
         }
     }
 
@@ -85,6 +84,11 @@ public class ServerActivity extends Activity implements MsfServerList.UpdateList
                 updateView();
             }
         });
+
+        if (firstLaunch && msfServerList.getServerList().size() == 0) {
+            firstLaunch = false;
+            startServerDetailActivity(MsfServerList.RPC_SERVER_ID_NEW);
+        }
     }
 
     public void clickAddServer(View view) {

@@ -36,7 +36,7 @@ public class ServerDetailActivity extends Activity implements MsfServerList.Upda
         rpcServerView = (RpcServerView) findViewById(R.id.rpcserverview_server);
 
         msfServerList = Msf.get().msfServerList;
-        int rpcServerId = getIntent().getIntExtra(MsfServerList.RPC_SERVER_ID, -1);
+        rpcServerId = getIntent().getIntExtra(MsfServerList.RPC_SERVER_ID, -1);
         if (rpcServerId == MsfServerList.RPC_SERVER_ID_NEW) {
             rpcServer = new RpcServer();
         } else {
@@ -74,7 +74,9 @@ public class ServerDetailActivity extends Activity implements MsfServerList.Upda
     }
 
     private void updateView(RpcServer rpcServer) {
-        rpcServerView.updateView(rpcServer);
+        if (rpcServerId != MsfServerList.RPC_SERVER_ID_NEW) {
+            rpcServerView.updateView(rpcServer);
+        }
         edittextIp.setText(rpcServer.rpcHost);
         edittextUser.setText(rpcServer.rpcUser);
         edittextPort.setText(String.valueOf(rpcServer.rpcPort));
@@ -106,12 +108,29 @@ public class ServerDetailActivity extends Activity implements MsfServerList.Upda
     }
         */
 
+
+    private void updateRpcServer() {
+        rpcServer.rpcHost = edittextIp.getText().toString();
+        rpcServer.rpcUser = edittextUser.getText().toString();
+        rpcServer.rpcPassword = edittextPass.getText().toString();
+        rpcServer.rpcPort = Integer.valueOf(edittextPort.getText().toString());
+        if (rpcServerId == MsfServerList.RPC_SERVER_ID_NEW) {
+            msfServerList.serverList.add(rpcServer);
+            rpcServerId = msfServerList.getServerList().size() - 1;
+        }
+    }
+
     public void connect(View view) {
-        Msf.get().msfServerList.connectAsync(rpcServer);
+        updateRpcServer();
+        updateView(rpcServer);
+        msfServerList.saveServerList();
+        msfServerList.connectAsync(rpcServer);
     }
 
     public void update(View view) {
-        Msf.get().msfServerList.saveServerList();
+        updateRpcServer();
+        updateView(rpcServer);
+        msfServerList.saveServerList();
     }
 
 }

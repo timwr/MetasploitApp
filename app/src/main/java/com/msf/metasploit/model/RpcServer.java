@@ -10,7 +10,8 @@ public class RpcServer extends SavedRpcServer {
     public static final int STATUS_CONNECTING = 1;
     public static final int STATUS_CONNECTION_FAILED = 2;
     public static final int STATUS_AUTHORISED = 3;
-    public static final int STATUS_AUTHORISATION_FAILED = 4;
+    public static final int STATUS_CONNECTED = 4;
+    public static final int STATUS_AUTHORISATION_FAILED = 5;
 
     public int status;
     public String rpcPassword;
@@ -22,6 +23,8 @@ public class RpcServer extends SavedRpcServer {
         } else if (status == RpcServer.STATUS_CONNECTING) {
             return R.string.rpc_status_connecting;
         } else if (status == RpcServer.STATUS_AUTHORISED) {
+            return R.string.rpc_status_authorised;
+        } else if (status == RpcServer.STATUS_CONNECTED) {
             return R.string.rpc_status_connected;
         } else if (status == RpcServer.STATUS_CONNECTION_FAILED) {
             return R.string.rpc_status_connection_failed;

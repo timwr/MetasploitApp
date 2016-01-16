@@ -38,6 +38,8 @@
 
             <EditText
                 android:id="@+id/edittext_ip"
+                android:maxLines="1"
+                android:singleLine="true"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
@@ -59,8 +61,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
+                android:maxLines="1"
+                android:singleLine="true"
                 android:hint="port (55553)"
-                android:text="" />
+                android:text="55553" />
         </LinearLayout>
 
         <LinearLayout
@@ -78,6 +82,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
+                android:maxLines="1"
+                android:singleLine="true"
                 android:hint="username (msf)"
                 android:text="" />
         </LinearLayout>
@@ -97,6 +103,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
+                android:maxLines="1"
+                android:singleLine="true"
                 android:hint="password"
                 android:inputType="textPassword"
                 android:text="" />

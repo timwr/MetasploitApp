@@ -12,6 +12,12 @@ public class SavedRpcServer {
     public String rpcUser;
     public int rpcPort;
 
+    public SavedRpcServer() {
+        rpcHost = "";
+        rpcUser = "msf";
+        rpcPort = 55553;
+    }
+
     public String getRpcServerName() {
         if (this.name != null) {
             return name;
