@@ -118,6 +118,15 @@ public class TerminalPresenter {
             prompt = prompt.replaceAll("\\x01|\\x02", "");
             terminal.prompt = prompt;
         }
+
+        // Fix MSFRPC bugs
+        if ("meterpreter >".equals(terminal.prompt) && terminal.type == Terminal.TYPE_CONSOLE) {
+            terminal.prompt = "msf > ";
+        }
+        if (terminal.prompt == null && terminal.type == Terminal.TYPE_METERPRETER) {
+            terminal.prompt = "meterpreter > ";
+        }
+
         if (terminal.prompt == null) {
             terminal.prompt = "";
         }
